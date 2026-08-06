@@ -1,0 +1,26 @@
+# PyCharm
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+.venv/
+venv/
+
+# Python environment
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Large datasets
+data/
+
+# Results generated during experiments
+results/
+
+# Temporary files
+*.log
