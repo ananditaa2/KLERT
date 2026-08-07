@@ -1,28 +1,27 @@
-from torchvision import datasets, transforms
+from dataset.dataloader import train_loader, test_loader
 
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor()
-])
 
-train_dataset = datasets.ImageFolder(
-    root="data/Training",
-    transform=transform
-)
+print("======================================")
+print("       DATASET CLASS CHECK")
+print("======================================")
 
-test_dataset = datasets.ImageFolder(
-    root="data/Testing",
-    transform=transform
-)
 
-print("Training Classes:")
-print(train_dataset.classes)
+print("\nTraining classes:")
+print(train_loader.dataset.classes)
 
-print("\nTraining Class to Index:")
-print(train_dataset.class_to_idx)
 
-print("\nTesting Classes:")
-print(test_dataset.classes)
+print("\nTraining class_to_idx:")
+print(train_loader.dataset.class_to_idx)
 
-print("\nTesting Class to Index:")
-print(test_dataset.class_to_idx)
+
+print("\nTesting classes:")
+print(test_loader.dataset.classes)
+
+
+print("\nTesting class_to_idx:")
+print(test_loader.dataset.class_to_idx)
+
+
+print("\n======================================")
+print("              DONE")
+print("======================================")

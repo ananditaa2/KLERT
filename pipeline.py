@@ -143,7 +143,7 @@ def classify_mri(image_path):
 
 if __name__ == "__main__":
 
-    image_path = "sample.jpg"
+    image_path = ""
 
     result = classify_mri(image_path)
 

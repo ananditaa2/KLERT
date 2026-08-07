@@ -12,8 +12,7 @@ from models.cnn_model import BrainTumorCNN
 # =====================================================
 
 device = torch.device(
-    "cuda" if torch.cuda.is_available()
-    else "cpu"
+    "cuda" if torch.cuda.is_available() else "cpu"
 )
 
 print("Using Device:", device)
@@ -40,7 +39,7 @@ model = BrainTumorCNN().to(device)
 
 model_path = "brain_tumor_cnn_v2.pth"
 
-print("Loading model from:")
+print("\nLoading model from:")
 print(os.path.abspath(model_path))
 
 if not os.path.exists(model_path):
@@ -57,10 +56,12 @@ model.load_state_dict(
 
 model.eval()
 
+print("Model Loaded Successfully!")
+
 
 # =====================================================
 # Transform
-# MUST BE SAME AS TRAINING
+# MUST BE THE SAME AS TRAINING
 # =====================================================
 
 transform = transforms.Compose([
@@ -73,7 +74,7 @@ transform = transforms.Compose([
 # Image
 # =====================================================
 
-image_path = "sampleee.jpg"
+image_path = "sample4.jpg"
 
 print("\nImage path:")
 print(os.path.abspath(image_path))
@@ -83,11 +84,9 @@ if not os.path.exists(image_path):
         f"Image not found: {os.path.abspath(image_path)}"
     )
 
-
 image = Image.open(
     image_path
 ).convert("RGB")
-
 
 print("Image size:", image.size)
 
@@ -98,7 +97,11 @@ print("Image size:", image.size)
 
 image_tensor = transform(image)
 
-image_tensor = image_tensor.unsqueeze(0).to(device)
+image_tensor = image_tensor.unsqueeze(0)
+
+image_tensor = image_tensor.to(device)
+
+print("Input tensor shape:", image_tensor.shape)
 
 
 # =====================================================
@@ -126,16 +129,22 @@ with torch.no_grad():
 
 predicted_index = predicted.item()
 
+predicted_class = class_names[predicted_index]
+
+confidence_value = confidence.item() * 100
+
+
 print("\n==============================")
+print("        CNN PREDICTION")
+print("==============================")
 
 print(
     "Prediction:",
-    class_names[predicted_index]
+    predicted_class
 )
 
 print(
-    "Confidence:",
-    f"{confidence.item() * 100:.2f}%"
+    f"Confidence: {confidence_value:.2f}%"
 )
 
 print("==============================")
@@ -155,6 +164,15 @@ for i, probability in enumerate(
         f"{class_names[i]:12s}: "
         f"{probability.item() * 100:.2f}%"
     )
+
+
+# =====================================================
+# Raw Model Outputs
+# Useful for debugging
+# =====================================================
+
+print("\nRaw Model Outputs:")
+print(outputs)
 
 
 print("\nPrediction Complete.")
