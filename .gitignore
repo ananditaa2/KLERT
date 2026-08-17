@@ -22,5 +22,11 @@ data/
 # Results generated during experiments
 results/
 
+# Trained model weights (large binary files)
+*.pth
+
+# HTML exports / junk
+*.html
+
 # Temporary files
 *.log
