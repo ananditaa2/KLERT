@@ -1,0 +1,204 @@
+<html>
+<head>
+<title>Colab_Training.ipynb</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #bcbec4;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #6aab73;}
+.s4 { color: #7a7e85;}
+.s5 { color: #2aacb8;}
+.ls0 { height: 1px; border-width: 0; color: #43454a; background-color:#43454a}
+</style>
+</head>
+<body bgcolor="#191a1c">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Colab_Training.ipynb</font>
+</center></td></tr></table>
+<pre><span class="s0">#%% md 
+# Hackathon Multimodel Training Pipeline 
+This notebook trains ResNet18 and VGG16, compares them with your Custom CNN, and generates charts for your Hackathon project. 
+ 
+**Instructions:** 
+1. Go to **Runtime -&gt; Change runtime type** and select **T4 GPU**. 
+2. Upload your `dataset.zip` to the Colab files panel and unzip it, OR mount your Google Drive if your data is there. 
+3. Upload your existing `brain_tumor_cnn_v2.pth` file here so it can be evaluated alongside the others. 
+4. Ensure the folder structure matches your local setup (e.g., `data/Training/...` and `data/Testing/...`). 
+5. Click **Runtime -&gt; Run all**. <hr class="ls0">#%% 
+!pip install torch torchvision matplotlib scikit</span><span class="s1">-</span><span class="s0">learn seaborn</span><hr class="ls0"><span class="s0">#%% md 
+## 1. Import Libraries and Load Data <hr class="ls0">#%% 
+</span><span class="s2">import </span><span class="s0">torch</span>
+<span class="s2">import </span><span class="s0">torch</span><span class="s1">.</span><span class="s0">nn </span><span class="s2">as </span><span class="s0">nn</span>
+<span class="s2">import </span><span class="s0">torch</span><span class="s1">.</span><span class="s0">optim </span><span class="s2">as </span><span class="s0">optim</span>
+<span class="s2">from </span><span class="s0">torchvision </span><span class="s2">import </span><span class="s0">datasets</span><span class="s1">, </span><span class="s0">transforms</span><span class="s1">, </span><span class="s0">models</span>
+<span class="s2">from </span><span class="s0">torch</span><span class="s1">.</span><span class="s0">utils</span><span class="s1">.</span><span class="s0">data </span><span class="s2">import </span><span class="s0">DataLoader</span>
+<span class="s2">import </span><span class="s0">matplotlib</span><span class="s1">.</span><span class="s0">pyplot </span><span class="s2">as </span><span class="s0">plt</span>
+<span class="s2">import </span><span class="s0">seaborn </span><span class="s2">as </span><span class="s0">sns</span>
+<span class="s2">from </span><span class="s0">sklearn</span><span class="s1">.</span><span class="s0">metrics </span><span class="s2">import </span><span class="s0">classification_report</span><span class="s1">, </span><span class="s0">confusion_matrix</span><span class="s1">, </span><span class="s0">accuracy_score</span><span class="s1">, </span><span class="s0">f1_score</span><span class="s1">, </span><span class="s0">precision_score</span><span class="s1">, </span><span class="s0">recall_score</span>
+<span class="s2">import </span><span class="s0">numpy </span><span class="s2">as </span><span class="s0">np</span>
+<span class="s2">import </span><span class="s0">time</span>
+<span class="s2">import </span><span class="s0">json</span>
+<span class="s2">import </span><span class="s0">os</span>
+
+<span class="s0">device </span><span class="s1">= </span><span class="s0">torch</span><span class="s1">.</span><span class="s0">device</span><span class="s1">(</span><span class="s3">'cuda' </span><span class="s2">if </span><span class="s0">torch</span><span class="s1">.</span><span class="s0">cuda</span><span class="s1">.</span><span class="s0">is_available</span><span class="s1">() </span><span class="s2">else </span><span class="s3">'cpu'</span><span class="s1">)</span>
+<span class="s0">print</span><span class="s1">(</span><span class="s3">f'Using Device: </span><span class="s2">{</span><span class="s0">device</span><span class="s2">}</span><span class="s3">'</span><span class="s1">)</span>
+
+<span class="s4"># Exact same transforms as your dataloader.py</span>
+<span class="s0">transform </span><span class="s1">= </span><span class="s0">transforms</span><span class="s1">.</span><span class="s0">Compose</span><span class="s1">([</span>
+    <span class="s0">transforms</span><span class="s1">.</span><span class="s0">Resize</span><span class="s1">((</span><span class="s5">224</span><span class="s1">, </span><span class="s5">224</span><span class="s1">)),</span>
+    <span class="s0">transforms</span><span class="s1">.</span><span class="s0">ToTensor</span><span class="s1">()</span>
+<span class="s1">])</span>
+
+<span class="s4"># NOTE: Make sure these paths match where you extracted your dataset on Colab</span>
+<span class="s0">train_dataset </span><span class="s1">= </span><span class="s0">datasets</span><span class="s1">.</span><span class="s0">ImageFolder</span><span class="s1">(</span><span class="s0">root</span><span class="s1">=</span><span class="s3">'data/Training'</span><span class="s1">, </span><span class="s0">transform</span><span class="s1">=</span><span class="s0">transform</span><span class="s1">)</span>
+<span class="s0">test_dataset </span><span class="s1">= </span><span class="s0">datasets</span><span class="s1">.</span><span class="s0">ImageFolder</span><span class="s1">(</span><span class="s0">root</span><span class="s1">=</span><span class="s3">'data/Testing'</span><span class="s1">, </span><span class="s0">transform</span><span class="s1">=</span><span class="s0">transform</span><span class="s1">)</span>
+
+<span class="s0">train_loader </span><span class="s1">= </span><span class="s0">DataLoader</span><span class="s1">(</span><span class="s0">train_dataset</span><span class="s1">, </span><span class="s0">batch_size</span><span class="s1">=</span><span class="s5">32</span><span class="s1">, </span><span class="s0">shuffle</span><span class="s1">=</span><span class="s2">True</span><span class="s1">)</span>
+<span class="s0">test_loader </span><span class="s1">= </span><span class="s0">DataLoader</span><span class="s1">(</span><span class="s0">test_dataset</span><span class="s1">, </span><span class="s0">batch_size</span><span class="s1">=</span><span class="s5">32</span><span class="s1">, </span><span class="s0">shuffle</span><span class="s1">=</span><span class="s2">False</span><span class="s1">)</span>
+
+<span class="s0">class_names </span><span class="s1">= </span><span class="s0">train_dataset</span><span class="s1">.</span><span class="s0">classes</span>
+<span class="s0">print</span><span class="s1">(</span><span class="s3">'Classes:'</span><span class="s1">, </span><span class="s0">class_names</span><span class="s1">)</span><hr class="ls0"><span class="s0">#%% md 
+## 2. Define the Model Architectures <hr class="ls0">#%% 
+</span><span class="s4"># 1. Custom CNN (To evaluate your existing one if you upload the weights, or just as reference)</span>
+<span class="s2">class </span><span class="s0">BrainTumorCNN</span><span class="s1">(</span><span class="s0">nn</span><span class="s1">.</span><span class="s0">Module</span><span class="s1">):</span>
+    <span class="s2">def </span><span class="s0">__init__</span><span class="s1">(</span><span class="s0">self</span><span class="s1">):</span>
+        <span class="s0">super</span><span class="s1">(</span><span class="s0">BrainTumorCNN</span><span class="s1">, </span><span class="s0">self</span><span class="s1">).</span><span class="s0">__init__</span><span class="s1">()</span>
+        <span class="s0">self</span><span class="s1">.</span><span class="s0">features </span><span class="s1">= </span><span class="s0">nn</span><span class="s1">.</span><span class="s0">Sequential</span><span class="s1">(</span>
+            <span class="s0">nn</span><span class="s1">.</span><span class="s0">Conv2d</span><span class="s1">(</span><span class="s5">3</span><span class="s1">, </span><span class="s5">32</span><span class="s1">, </span><span class="s0">kernel_size</span><span class="s1">=</span><span class="s5">3</span><span class="s1">, </span><span class="s0">padding</span><span class="s1">=</span><span class="s5">1</span><span class="s1">),</span>
+            <span class="s0">nn</span><span class="s1">.</span><span class="s0">ReLU</span><span class="s1">(),</span>
+            <span class="s0">nn</span><span class="s1">.</span><span class="s0">MaxPool2d</span><span class="s1">(</span><span class="s5">2</span><span class="s1">, </span><span class="s5">2</span><span class="s1">),</span>
+            <span class="s0">nn</span><span class="s1">.</span><span class="s0">Conv2d</span><span class="s1">(</span><span class="s5">32</span><span class="s1">, </span><span class="s5">64</span><span class="s1">, </span><span class="s0">kernel_size</span><span class="s1">=</span><span class="s5">3</span><span class="s1">, </span><span class="s0">padding</span><span class="s1">=</span><span class="s5">1</span><span class="s1">),</span>
+            <span class="s0">nn</span><span class="s1">.</span><span class="s0">ReLU</span><span class="s1">(),</span>
+            <span class="s0">nn</span><span class="s1">.</span><span class="s0">MaxPool2d</span><span class="s1">(</span><span class="s5">2</span><span class="s1">, </span><span class="s5">2</span><span class="s1">),</span>
+            <span class="s0">nn</span><span class="s1">.</span><span class="s0">Conv2d</span><span class="s1">(</span><span class="s5">64</span><span class="s1">, </span><span class="s5">128</span><span class="s1">, </span><span class="s0">kernel_size</span><span class="s1">=</span><span class="s5">3</span><span class="s1">, </span><span class="s0">padding</span><span class="s1">=</span><span class="s5">1</span><span class="s1">),</span>
+            <span class="s0">nn</span><span class="s1">.</span><span class="s0">ReLU</span><span class="s1">(),</span>
+            <span class="s0">nn</span><span class="s1">.</span><span class="s0">MaxPool2d</span><span class="s1">(</span><span class="s5">2</span><span class="s1">, </span><span class="s5">2</span><span class="s1">),</span>
+            <span class="s0">nn</span><span class="s1">.</span><span class="s0">Conv2d</span><span class="s1">(</span><span class="s5">128</span><span class="s1">, </span><span class="s5">256</span><span class="s1">, </span><span class="s0">kernel_size</span><span class="s1">=</span><span class="s5">3</span><span class="s1">, </span><span class="s0">padding</span><span class="s1">=</span><span class="s5">1</span><span class="s1">),</span>
+            <span class="s0">nn</span><span class="s1">.</span><span class="s0">ReLU</span><span class="s1">(),</span>
+            <span class="s0">nn</span><span class="s1">.</span><span class="s0">MaxPool2d</span><span class="s1">(</span><span class="s5">2</span><span class="s1">, </span><span class="s5">2</span><span class="s1">)</span>
+        <span class="s1">)</span>
+        <span class="s0">self</span><span class="s1">.</span><span class="s0">classifier </span><span class="s1">= </span><span class="s0">nn</span><span class="s1">.</span><span class="s0">Sequential</span><span class="s1">(</span>
+            <span class="s0">nn</span><span class="s1">.</span><span class="s0">Linear</span><span class="s1">(</span><span class="s5">256 </span><span class="s1">* </span><span class="s5">14 </span><span class="s1">* </span><span class="s5">14</span><span class="s1">, </span><span class="s5">512</span><span class="s1">),</span>
+            <span class="s0">nn</span><span class="s1">.</span><span class="s0">ReLU</span><span class="s1">(),</span>
+            <span class="s0">nn</span><span class="s1">.</span><span class="s0">Dropout</span><span class="s1">(</span><span class="s5">0.5</span><span class="s1">),</span>
+            <span class="s0">nn</span><span class="s1">.</span><span class="s0">Linear</span><span class="s1">(</span><span class="s5">512</span><span class="s1">, </span><span class="s5">4</span><span class="s1">)</span>
+        <span class="s1">)</span>
+    <span class="s2">def </span><span class="s0">forward</span><span class="s1">(</span><span class="s0">self</span><span class="s1">, </span><span class="s0">x</span><span class="s1">):</span>
+        <span class="s0">x </span><span class="s1">= </span><span class="s0">self</span><span class="s1">.</span><span class="s0">features</span><span class="s1">(</span><span class="s0">x</span><span class="s1">)</span>
+        <span class="s0">x </span><span class="s1">= </span><span class="s0">x</span><span class="s1">.</span><span class="s0">view</span><span class="s1">(</span><span class="s0">x</span><span class="s1">.</span><span class="s0">size</span><span class="s1">(</span><span class="s5">0</span><span class="s1">), -</span><span class="s5">1</span><span class="s1">)</span>
+        <span class="s0">x </span><span class="s1">= </span><span class="s0">self</span><span class="s1">.</span><span class="s0">classifier</span><span class="s1">(</span><span class="s0">x</span><span class="s1">)</span>
+        <span class="s2">return </span><span class="s0">x</span>
+
+<span class="s4"># 2. ResNet18</span>
+<span class="s2">def </span><span class="s0">get_resnet</span><span class="s1">():</span>
+    <span class="s0">model </span><span class="s1">= </span><span class="s0">models</span><span class="s1">.</span><span class="s0">resnet18</span><span class="s1">(</span><span class="s0">pretrained</span><span class="s1">=</span><span class="s2">True</span><span class="s1">)</span>
+    <span class="s0">model</span><span class="s1">.</span><span class="s0">fc </span><span class="s1">= </span><span class="s0">nn</span><span class="s1">.</span><span class="s0">Linear</span><span class="s1">(</span><span class="s0">model</span><span class="s1">.</span><span class="s0">fc</span><span class="s1">.</span><span class="s0">in_features</span><span class="s1">, </span><span class="s5">4</span><span class="s1">)</span>
+    <span class="s2">return </span><span class="s0">model</span>
+
+<span class="s4"># 3. VGG16</span>
+<span class="s2">def </span><span class="s0">get_vgg</span><span class="s1">():</span>
+    <span class="s0">model </span><span class="s1">= </span><span class="s0">models</span><span class="s1">.</span><span class="s0">vgg16</span><span class="s1">(</span><span class="s0">pretrained</span><span class="s1">=</span><span class="s2">True</span><span class="s1">)</span>
+    <span class="s4"># Freeze early layers to speed up training</span>
+    <span class="s2">for </span><span class="s0">param </span><span class="s2">in </span><span class="s0">model</span><span class="s1">.</span><span class="s0">features</span><span class="s1">.</span><span class="s0">parameters</span><span class="s1">():</span>
+        <span class="s0">param</span><span class="s1">.</span><span class="s0">requires_grad </span><span class="s1">= </span><span class="s2">False</span>
+    <span class="s0">model</span><span class="s1">.</span><span class="s0">classifier</span><span class="s1">[</span><span class="s5">6</span><span class="s1">] = </span><span class="s0">nn</span><span class="s1">.</span><span class="s0">Linear</span><span class="s1">(</span><span class="s0">model</span><span class="s1">.</span><span class="s0">classifier</span><span class="s1">[</span><span class="s5">6</span><span class="s1">].</span><span class="s0">in_features</span><span class="s1">, </span><span class="s5">4</span><span class="s1">)</span>
+    <span class="s2">return </span><span class="s0">model</span><hr class="ls0"><span class="s0">#%% md 
+## 3. Training Function <hr class="ls0">#%% 
+</span><span class="s2">def </span><span class="s0">train_model</span><span class="s1">(</span><span class="s0">model</span><span class="s1">, </span><span class="s0">name</span><span class="s1">, </span><span class="s0">epochs</span><span class="s1">=</span><span class="s5">20</span><span class="s1">, </span><span class="s0">lr</span><span class="s1">=</span><span class="s5">0.001</span><span class="s1">):</span>
+    <span class="s0">model </span><span class="s1">= </span><span class="s0">model</span><span class="s1">.</span><span class="s0">to</span><span class="s1">(</span><span class="s0">device</span><span class="s1">)</span>
+    <span class="s0">criterion </span><span class="s1">= </span><span class="s0">nn</span><span class="s1">.</span><span class="s0">CrossEntropyLoss</span><span class="s1">()</span>
+    <span class="s0">optimizer </span><span class="s1">= </span><span class="s0">optim</span><span class="s1">.</span><span class="s0">Adam</span><span class="s1">(</span><span class="s0">filter</span><span class="s1">(</span><span class="s2">lambda </span><span class="s0">p</span><span class="s1">: </span><span class="s0">p</span><span class="s1">.</span><span class="s0">requires_grad</span><span class="s1">, </span><span class="s0">model</span><span class="s1">.</span><span class="s0">parameters</span><span class="s1">()), </span><span class="s0">lr</span><span class="s1">=</span><span class="s0">lr</span><span class="s1">)</span>
+    <span class="s0">best_acc </span><span class="s1">= </span><span class="s5">0.0</span>
+    <span class="s0">print</span><span class="s1">(</span><span class="s3">f'</span><span class="s2">\n</span><span class="s3">--- Training </span><span class="s2">{</span><span class="s0">name</span><span class="s2">} </span><span class="s3">---'</span><span class="s1">)</span>
+    <span class="s2">for </span><span class="s0">epoch </span><span class="s2">in </span><span class="s0">range</span><span class="s1">(</span><span class="s0">epochs</span><span class="s1">):</span>
+        <span class="s0">model</span><span class="s1">.</span><span class="s0">train</span><span class="s1">()</span>
+        <span class="s0">running_loss </span><span class="s1">= </span><span class="s5">0.0</span>
+        <span class="s2">for </span><span class="s0">images</span><span class="s1">, </span><span class="s0">labels </span><span class="s2">in </span><span class="s0">train_loader</span><span class="s1">:</span>
+            <span class="s0">images</span><span class="s1">, </span><span class="s0">labels </span><span class="s1">= </span><span class="s0">images</span><span class="s1">.</span><span class="s0">to</span><span class="s1">(</span><span class="s0">device</span><span class="s1">), </span><span class="s0">labels</span><span class="s1">.</span><span class="s0">to</span><span class="s1">(</span><span class="s0">device</span><span class="s1">)</span>
+            <span class="s0">optimizer</span><span class="s1">.</span><span class="s0">zero_grad</span><span class="s1">()</span>
+            <span class="s0">outputs </span><span class="s1">= </span><span class="s0">model</span><span class="s1">(</span><span class="s0">images</span><span class="s1">)</span>
+            <span class="s0">loss </span><span class="s1">= </span><span class="s0">criterion</span><span class="s1">(</span><span class="s0">outputs</span><span class="s1">, </span><span class="s0">labels</span><span class="s1">)</span>
+            <span class="s0">loss</span><span class="s1">.</span><span class="s0">backward</span><span class="s1">()</span>
+            <span class="s0">optimizer</span><span class="s1">.</span><span class="s0">step</span><span class="s1">()</span>
+            <span class="s0">running_loss </span><span class="s1">+= </span><span class="s0">loss</span><span class="s1">.</span><span class="s0">item</span><span class="s1">()</span>
+        
+        <span class="s4"># Validation</span>
+        <span class="s0">model</span><span class="s1">.</span><span class="s0">eval</span><span class="s1">()</span>
+        <span class="s0">correct</span><span class="s1">, </span><span class="s0">total </span><span class="s1">= </span><span class="s5">0</span><span class="s1">, </span><span class="s5">0</span>
+        <span class="s2">with </span><span class="s0">torch</span><span class="s1">.</span><span class="s0">no_grad</span><span class="s1">():</span>
+            <span class="s2">for </span><span class="s0">images</span><span class="s1">, </span><span class="s0">labels </span><span class="s2">in </span><span class="s0">test_loader</span><span class="s1">:</span>
+                <span class="s0">images</span><span class="s1">, </span><span class="s0">labels </span><span class="s1">= </span><span class="s0">images</span><span class="s1">.</span><span class="s0">to</span><span class="s1">(</span><span class="s0">device</span><span class="s1">), </span><span class="s0">labels</span><span class="s1">.</span><span class="s0">to</span><span class="s1">(</span><span class="s0">device</span><span class="s1">)</span>
+                <span class="s0">outputs </span><span class="s1">= </span><span class="s0">model</span><span class="s1">(</span><span class="s0">images</span><span class="s1">)</span>
+                <span class="s0">_</span><span class="s1">, </span><span class="s0">preds </span><span class="s1">= </span><span class="s0">torch</span><span class="s1">.</span><span class="s0">max</span><span class="s1">(</span><span class="s0">outputs</span><span class="s1">, </span><span class="s5">1</span><span class="s1">)</span>
+                <span class="s0">total </span><span class="s1">+= </span><span class="s0">labels</span><span class="s1">.</span><span class="s0">size</span><span class="s1">(</span><span class="s5">0</span><span class="s1">)</span>
+                <span class="s0">correct </span><span class="s1">+= (</span><span class="s0">preds </span><span class="s1">== </span><span class="s0">labels</span><span class="s1">).</span><span class="s0">sum</span><span class="s1">().</span><span class="s0">item</span><span class="s1">()</span>
+        <span class="s0">acc </span><span class="s1">= </span><span class="s5">100 </span><span class="s1">* </span><span class="s0">correct </span><span class="s1">/ </span><span class="s0">total</span>
+        <span class="s0">print</span><span class="s1">(</span><span class="s3">f'Epoch </span><span class="s2">{</span><span class="s0">epoch</span><span class="s1">+</span><span class="s5">1</span><span class="s2">}</span><span class="s3">/</span><span class="s2">{</span><span class="s0">epochs</span><span class="s2">} </span><span class="s3">| Loss: </span><span class="s2">{</span><span class="s0">running_loss</span><span class="s1">/</span><span class="s0">len</span><span class="s1">(</span><span class="s0">train_loader</span><span class="s1">)</span><span class="s2">:</span><span class="s3">.4f</span><span class="s2">} </span><span class="s3">| Val Acc: </span><span class="s2">{</span><span class="s0">acc</span><span class="s2">:</span><span class="s3">.2f</span><span class="s2">}</span><span class="s3">%'</span><span class="s1">)</span>
+        
+        <span class="s2">if </span><span class="s0">acc </span><span class="s1">&gt; </span><span class="s0">best_acc</span><span class="s1">:</span>
+            <span class="s0">best_acc </span><span class="s1">= </span><span class="s0">acc</span>
+            <span class="s0">torch</span><span class="s1">.</span><span class="s0">save</span><span class="s1">(</span><span class="s0">model</span><span class="s1">.</span><span class="s0">state_dict</span><span class="s1">(), </span><span class="s3">f'brain_tumor_</span><span class="s2">{</span><span class="s0">name</span><span class="s2">}</span><span class="s3">.pth'</span><span class="s1">)</span>
+    <span class="s0">print</span><span class="s1">(</span><span class="s3">f'Finished </span><span class="s2">{</span><span class="s0">name</span><span class="s2">}</span><span class="s3">. Best Acc: </span><span class="s2">{</span><span class="s0">best_acc</span><span class="s2">:</span><span class="s3">.2f</span><span class="s2">}</span><span class="s3">%'</span><span class="s1">)</span>
+    <span class="s2">return </span><span class="s3">f'brain_tumor_</span><span class="s2">{</span><span class="s0">name</span><span class="s2">}</span><span class="s3">.pth'</span><hr class="ls0"><span class="s0">#%% md 
+## 4. Train The Heavy Models! <hr class="ls0">#%% 
+</span><span class="s4"># Train ResNet18 (takes about 5-10 minutes on T4 GPU)</span>
+<span class="s0">resnet_model </span><span class="s1">= </span><span class="s0">get_resnet</span><span class="s1">()</span>
+<span class="s0">train_model</span><span class="s1">(</span><span class="s0">resnet_model</span><span class="s1">, </span><span class="s3">'resnet18'</span><span class="s1">, </span><span class="s0">epochs</span><span class="s1">=</span><span class="s5">20</span><span class="s1">)</span>
+
+<span class="s4"># Train VGG16 (takes about 10-15 minutes on T4 GPU)</span>
+<span class="s0">vgg_model </span><span class="s1">= </span><span class="s0">get_vgg</span><span class="s1">()</span>
+<span class="s0">train_model</span><span class="s1">(</span><span class="s0">vgg_model</span><span class="s1">, </span><span class="s3">'vgg16'</span><span class="s1">, </span><span class="s0">epochs</span><span class="s1">=</span><span class="s5">20</span><span class="s1">)</span><hr class="ls0"><span class="s0">#%% md 
+## 5. Evaluation and Chart Generation <hr class="ls0">#%% 
+</span><span class="s2">def </span><span class="s0">evaluate</span><span class="s1">(</span><span class="s0">model_obj</span><span class="s1">, </span><span class="s0">path</span><span class="s1">, </span><span class="s0">name</span><span class="s1">):</span>
+    <span class="s2">if not </span><span class="s0">os</span><span class="s1">.</span><span class="s0">path</span><span class="s1">.</span><span class="s0">exists</span><span class="s1">(</span><span class="s0">path</span><span class="s1">):</span>
+        <span class="s0">print</span><span class="s1">(</span><span class="s3">f'Skipping </span><span class="s2">{</span><span class="s0">name</span><span class="s2">}</span><span class="s3">, weights not found.'</span><span class="s1">)</span>
+        <span class="s2">return None</span>
+    <span class="s0">model_obj</span><span class="s1">.</span><span class="s0">load_state_dict</span><span class="s1">(</span><span class="s0">torch</span><span class="s1">.</span><span class="s0">load</span><span class="s1">(</span><span class="s0">path</span><span class="s1">, </span><span class="s0">map_location</span><span class="s1">=</span><span class="s0">device</span><span class="s1">))</span>
+    <span class="s0">model_obj </span><span class="s1">= </span><span class="s0">model_obj</span><span class="s1">.</span><span class="s0">to</span><span class="s1">(</span><span class="s0">device</span><span class="s1">)</span>
+    <span class="s0">model_obj</span><span class="s1">.</span><span class="s0">eval</span><span class="s1">()</span>
+    
+    <span class="s0">all_labels </span><span class="s1">= []</span>
+    <span class="s0">all_preds </span><span class="s1">= []</span>
+    <span class="s2">with </span><span class="s0">torch</span><span class="s1">.</span><span class="s0">no_grad</span><span class="s1">():</span>
+        <span class="s2">for </span><span class="s0">images</span><span class="s1">, </span><span class="s0">labels </span><span class="s2">in </span><span class="s0">test_loader</span><span class="s1">:</span>
+            <span class="s0">outputs </span><span class="s1">= </span><span class="s0">model_obj</span><span class="s1">(</span><span class="s0">images</span><span class="s1">.</span><span class="s0">to</span><span class="s1">(</span><span class="s0">device</span><span class="s1">))</span>
+            <span class="s0">_</span><span class="s1">, </span><span class="s0">preds </span><span class="s1">= </span><span class="s0">torch</span><span class="s1">.</span><span class="s0">max</span><span class="s1">(</span><span class="s0">outputs</span><span class="s1">, </span><span class="s5">1</span><span class="s1">)</span>
+            <span class="s0">all_labels</span><span class="s1">.</span><span class="s0">extend</span><span class="s1">(</span><span class="s0">labels</span><span class="s1">.</span><span class="s0">cpu</span><span class="s1">().</span><span class="s0">numpy</span><span class="s1">())</span>
+            <span class="s0">all_preds</span><span class="s1">.</span><span class="s0">extend</span><span class="s1">(</span><span class="s0">preds</span><span class="s1">.</span><span class="s0">cpu</span><span class="s1">().</span><span class="s0">numpy</span><span class="s1">())</span>
+            
+    <span class="s0">acc </span><span class="s1">= </span><span class="s0">accuracy_score</span><span class="s1">(</span><span class="s0">all_labels</span><span class="s1">, </span><span class="s0">all_preds</span><span class="s1">) * </span><span class="s5">100</span>
+    <span class="s0">f1 </span><span class="s1">= </span><span class="s0">f1_score</span><span class="s1">(</span><span class="s0">all_labels</span><span class="s1">, </span><span class="s0">all_preds</span><span class="s1">, </span><span class="s0">average</span><span class="s1">=</span><span class="s3">'weighted'</span><span class="s1">) * </span><span class="s5">100</span>
+    <span class="s0">prec </span><span class="s1">= </span><span class="s0">precision_score</span><span class="s1">(</span><span class="s0">all_labels</span><span class="s1">, </span><span class="s0">all_preds</span><span class="s1">, </span><span class="s0">average</span><span class="s1">=</span><span class="s3">'weighted'</span><span class="s1">) * </span><span class="s5">100</span>
+    <span class="s0">rec </span><span class="s1">= </span><span class="s0">recall_score</span><span class="s1">(</span><span class="s0">all_labels</span><span class="s1">, </span><span class="s0">all_preds</span><span class="s1">, </span><span class="s0">average</span><span class="s1">=</span><span class="s3">'weighted'</span><span class="s1">) * </span><span class="s5">100</span>
+    <span class="s0">cm </span><span class="s1">= </span><span class="s0">confusion_matrix</span><span class="s1">(</span><span class="s0">all_labels</span><span class="s1">, </span><span class="s0">all_preds</span><span class="s1">)</span>
+    
+    <span class="s4"># Plot Confusion Matrix</span>
+    <span class="s0">plt</span><span class="s1">.</span><span class="s0">figure</span><span class="s1">(</span><span class="s0">figsize</span><span class="s1">=(</span><span class="s5">6</span><span class="s1">,</span><span class="s5">5</span><span class="s1">))</span>
+    <span class="s0">sns</span><span class="s1">.</span><span class="s0">heatmap</span><span class="s1">(</span><span class="s0">cm</span><span class="s1">, </span><span class="s0">annot</span><span class="s1">=</span><span class="s2">True</span><span class="s1">, </span><span class="s0">fmt</span><span class="s1">=</span><span class="s3">'d'</span><span class="s1">, </span><span class="s0">cmap</span><span class="s1">=</span><span class="s3">'Blues'</span><span class="s1">, </span><span class="s0">xticklabels</span><span class="s1">=</span><span class="s0">class_names</span><span class="s1">, </span><span class="s0">yticklabels</span><span class="s1">=</span><span class="s0">class_names</span><span class="s1">)</span>
+    <span class="s0">plt</span><span class="s1">.</span><span class="s0">title</span><span class="s1">(</span><span class="s3">f'</span><span class="s2">{</span><span class="s0">name</span><span class="s2">} </span><span class="s3">Confusion Matrix'</span><span class="s1">)</span>
+    <span class="s0">plt</span><span class="s1">.</span><span class="s0">savefig</span><span class="s1">(</span><span class="s3">f'</span><span class="s2">{</span><span class="s0">name</span><span class="s2">}</span><span class="s3">_cm.png'</span><span class="s1">)</span>
+    <span class="s0">plt</span><span class="s1">.</span><span class="s0">close</span><span class="s1">()</span>
+    
+    <span class="s2">return </span><span class="s1">{</span><span class="s3">'Accuracy'</span><span class="s1">: </span><span class="s0">acc</span><span class="s1">, </span><span class="s3">'F1'</span><span class="s1">: </span><span class="s0">f1</span><span class="s1">, </span><span class="s3">'Precision'</span><span class="s1">: </span><span class="s0">prec</span><span class="s1">, </span><span class="s3">'Recall'</span><span class="s1">: </span><span class="s0">rec</span><span class="s1">}</span>
+
+<span class="s4"># PLEASE UPLOAD YOUR brain_tumor_cnn_v2.pth TO COLAB BEFORE RUNNING THIS CELL</span>
+<span class="s0">metrics </span><span class="s1">= {}</span>
+<span class="s0">metrics</span><span class="s1">[</span><span class="s3">'Custom_CNN'</span><span class="s1">] = </span><span class="s0">evaluate</span><span class="s1">(</span><span class="s0">BrainTumorCNN</span><span class="s1">(), </span><span class="s3">'brain_tumor_cnn_v2.pth'</span><span class="s1">, </span><span class="s3">'Custom_CNN'</span><span class="s1">)</span>
+<span class="s0">metrics</span><span class="s1">[</span><span class="s3">'ResNet18'</span><span class="s1">] = </span><span class="s0">evaluate</span><span class="s1">(</span><span class="s0">get_resnet</span><span class="s1">(), </span><span class="s3">'brain_tumor_resnet18.pth'</span><span class="s1">, </span><span class="s3">'ResNet18'</span><span class="s1">)</span>
+<span class="s0">metrics</span><span class="s1">[</span><span class="s3">'VGG16'</span><span class="s1">] = </span><span class="s0">evaluate</span><span class="s1">(</span><span class="s0">get_vgg</span><span class="s1">(), </span><span class="s3">'brain_tumor_vgg16.pth'</span><span class="s1">, </span><span class="s3">'VGG16'</span><span class="s1">)</span>
+
+<span class="s4"># Filter out None</span>
+<span class="s0">metrics </span><span class="s1">= {</span><span class="s0">k</span><span class="s1">: </span><span class="s0">v </span><span class="s2">for </span><span class="s0">k</span><span class="s1">, </span><span class="s0">v </span><span class="s2">in </span><span class="s0">metrics</span><span class="s1">.</span><span class="s0">items</span><span class="s1">() </span><span class="s2">if </span><span class="s0">v </span><span class="s2">is not None</span><span class="s1">}</span>
+
+<span class="s4"># Save metrics to JSON</span>
+<span class="s2">with </span><span class="s0">open</span><span class="s1">(</span><span class="s3">'model_metrics.json'</span><span class="s1">, </span><span class="s3">'w'</span><span class="s1">) </span><span class="s2">as </span><span class="s0">f</span><span class="s1">:</span>
+    <span class="s0">json</span><span class="s1">.</span><span class="s0">dump</span><span class="s1">(</span><span class="s0">metrics</span><span class="s1">, </span><span class="s0">f</span><span class="s1">)</span>
+<span class="s0">print</span><span class="s1">(</span><span class="s3">'</span><span class="s2">\n</span><span class="s3">Metrics saved to model_metrics.json!'</span><span class="s1">)</span>
+<span class="s0">print</span><span class="s1">(</span><span class="s0">json</span><span class="s1">.</span><span class="s0">dumps</span><span class="s1">(</span><span class="s0">metrics</span><span class="s1">, </span><span class="s0">indent</span><span class="s1">=</span><span class="s5">2</span><span class="s1">))</span><hr class="ls0"><span class="s0">#%% md 
+## 6. Download Your Files! 
+Download `brain_tumor_resnet18.pth`, `brain_tumor_vgg16.pth`, `model_metrics.json`, and the `_cm.png` files to your local computer and drop them into your project folder.</span></pre>
+</body>
+</html>

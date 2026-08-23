@@ -1,338 +1,364 @@
-import os
-import torch
-import numpy as np
-import matplotlib.pyplot as plt
-
-from PIL import Image
-from torchvision import transforms
-
-from models.cnn_model import BrainTumorCNN
-
-from pytorch_grad_cam import GradCAM
-from pytorch_grad_cam.utils.image import show_cam_on_image
-
-
 # ============================================================
-# 1. DEVICE
-# ============================================================
-
-device = torch.device(
-    "cuda" if torch.cuda.is_available() else "cpu"
-)
-
-print("Using Device:", device)
-
-
-# ============================================================
-# 2. CLASS NAMES
-# ============================================================
-
-class_names = [
-    "glioma",
-    "meningioma",
-    "notumor",
-    "pituitary"
-]
-
-
-# ============================================================
-# 3. LOAD MODEL
-# ============================================================
-
-model = BrainTumorCNN().to(device)
-
-model_path = "brain_tumor_cnn_v2.pth"
-
-print("\nLoading model:")
-print(os.path.abspath(model_path))
-
-model.load_state_dict(
-    torch.load(
-        model_path,
-        map_location=device
-    )
-)
-
-model.eval()
-
-print("Model Loaded Successfully!")
-
-
-# ============================================================
-# 4. IMAGE PATH
-# ============================================================
-
-image_path = "sample4.jpg"
-
-print("\nLoading image:")
-print(os.path.abspath(image_path))
-
-original_image = Image.open(
-    image_path
-).convert("RGB")
-
-print("Image size:", original_image.size)
-
-
-# ============================================================
-# 5. TRANSFORM
-# MUST MATCH TRAINING
-# ============================================================
-
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor()
-])
-
-
-# ============================================================
-# 6. PREPARE IMAGE
-# ============================================================
-
-image_tensor = transform(
-    original_image
-)
-
-image_tensor = image_tensor.unsqueeze(0)
-
-image_tensor = image_tensor.to(device)
-
-print(
-    "Input tensor shape:",
-    image_tensor.shape
-)
-
-
-# ============================================================
-# 7. PREDICTION
-# ============================================================
-
-with torch.no_grad():
-
-    outputs = model(image_tensor)
-
-    probabilities = torch.softmax(
-        outputs,
-        dim=1
-    )
-
-    confidence, predicted = torch.max(
-        probabilities,
-        dim=1
-    )
-
-
-predicted_index = predicted.item()
-
-predicted_class = class_names[predicted_index]
-
-confidence_value = confidence.item() * 100
-
-
-# ============================================================
-# 8. PRINT RESULT
+# 24. QUANTITATIVE GRAD-CAM ANALYSIS
 # ============================================================
 
 print("\n======================================")
-print("CNN PREDICTION")
-print("======================================")
-
-print(
-    "Prediction:",
-    predicted_class
-)
-
-print(
-    f"Confidence: {confidence_value:.2f}%"
-)
-
+print("      GRAD-CAM REGION ANALYSIS")
 print("======================================")
 
 
-# ============================================================
-# 9. TARGET LAYER
-# LAST CONVOLUTIONAL LAYER
-# ============================================================
+# ------------------------------------------------------------
+# 24.1 Calculate activation area
+# ------------------------------------------------------------
 
-target_layers = [
-    model.features[12]
-]
+activation_pixels = np.count_nonzero(
+    clean_mask
+)
+
+total_pixels = (
+    clean_mask.shape[0] *
+    clean_mask.shape[1]
+)
+
+activation_percentage = (
+    activation_pixels /
+    total_pixels
+) * 100
 
 
-# ============================================================
-# 10. CREATE GRAD-CAM
-# ============================================================
+# ------------------------------------------------------------
+# 24.2 Bounding Box
+# ------------------------------------------------------------
 
-cam = GradCAM(
-    model=model,
-    target_layers=target_layers
+x, y, w, h = cv2.boundingRect(
+    clean_mask
+)
+
+
+# ------------------------------------------------------------
+# 24.3 Centroid
+# ------------------------------------------------------------
+
+moments = cv2.moments(
+    clean_mask
+)
+
+if moments["m00"] != 0:
+
+    centroid_x = (
+        moments["m10"] /
+        moments["m00"]
+    )
+
+    centroid_y = (
+        moments["m01"] /
+        moments["m00"]
+    )
+
+else:
+
+    centroid_x = 0
+    centroid_y = 0
+
+
+# ------------------------------------------------------------
+# 24.4 Mean activation
+# ------------------------------------------------------------
+
+activation_region = (
+    refined_cam[clean_mask > 0]
+)
+
+if len(activation_region) > 0:
+
+    mean_activation = (
+        np.mean(activation_region)
+    )
+
+    max_activation = (
+        np.max(activation_region)
+    )
+
+else:
+
+    mean_activation = 0
+    max_activation = 0
+
+
+# ------------------------------------------------------------
+# 24.5 Print analysis
+# ------------------------------------------------------------
+
+print(
+    f"\nPrediction              : "
+    f"{predicted_class}"
+)
+
+print(
+    f"Confidence              : "
+    f"{confidence_value:.2f}%"
+)
+
+print(
+    f"Activation Area         : "
+    f"{activation_percentage:.2f}%"
+)
+
+print(
+    f"Activation Centroid     : "
+    f"({centroid_x:.1f}, {centroid_y:.1f})"
+)
+
+print(
+    f"Activation Bounding Box : "
+    f"x={x}, y={y}, w={w}, h={h}"
+)
+
+print(
+    f"Mean Activation         : "
+    f"{mean_activation:.3f}"
+)
+
+print(
+    f"Maximum Activation      : "
+    f"{max_activation:.3f}"
 )
 
 
 # ============================================================
-# 11. GENERATE HEATMAP
+# 25. CREATE CONTOUR OVERLAY
 # ============================================================
 
-grayscale_cam = cam(
-    input_tensor=image_tensor
+contour_image = (
+    np.array(
+        original_image.resize((224, 224))
+    ).copy()
 )
 
-grayscale_cam = grayscale_cam[0]
 
-
-# ============================================================
-# 12. PREPARE DISPLAY IMAGE
-# ============================================================
-
-display_image = original_image.resize(
-    (224, 224)
+# Find contours
+contours, _ = cv2.findContours(
+    clean_mask,
+    cv2.RETR_EXTERNAL,
+    cv2.CHAIN_APPROX_SIMPLE
 )
 
-display_image = np.array(
+
+# Draw contours
+cv2.drawContours(
+    contour_image,
+    contours,
+    -1,
+    (0, 255, 0),
+    2
+)
+
+
+# Draw bounding box
+if activation_pixels > 0:
+
+    cv2.rectangle(
+        contour_image,
+        (x, y),
+        (x + w, y + h),
+        (255, 255, 0),
+        2
+    )
+
+
+# Draw centroid
+if activation_pixels > 0:
+
+    cv2.circle(
+        contour_image,
+        (
+            int(centroid_x),
+            int(centroid_y)
+        ),
+        5,
+        (255, 0, 0),
+        -1
+    )
+
+
+# ============================================================
+# 26. SAVE CONTOUR ANALYSIS
+# ============================================================
+
+contour_path = (
+    "results/gradcam_region_analysis.jpg"
+)
+
+Image.fromarray(
+    contour_image
+).save(
+    contour_path
+)
+
+
+# ============================================================
+# 27. CREATE FINAL ANALYSIS FIGURE
+# ============================================================
+
+fig, axes = plt.subplots(
+    2,
+    3,
+    figsize=(15, 9)
+)
+
+
+# ------------------------------------------------------------
+# ORIGINAL MRI
+# ------------------------------------------------------------
+
+axes[0, 0].imshow(
     display_image
-).astype(
-    np.float32
-) / 255.0
+)
+
+axes[0, 0].set_title(
+    "1. Original MRI",
+    fontsize=13,
+    fontweight="bold"
+)
+
+axes[0, 0].axis("off")
 
 
-# ============================================================
-# 13. CREATE OVERLAY
-# ============================================================
+# ------------------------------------------------------------
+# RAW GRAD-CAM
+# ------------------------------------------------------------
 
-visualization = show_cam_on_image(
-    display_image,
-    grayscale_cam,
-    use_rgb=True
+axes[0, 1].imshow(
+    raw_heatmap
+)
+
+axes[0, 1].set_title(
+    "2. Raw Grad-CAM",
+    fontsize=13,
+    fontweight="bold"
+)
+
+axes[0, 1].axis("off")
+
+
+# ------------------------------------------------------------
+# REFINED HEATMAP
+# ------------------------------------------------------------
+
+axes[0, 2].imshow(
+    refined_heatmap
+)
+
+axes[0, 2].set_title(
+    "3. Refined Activation Map",
+    fontsize=13,
+    fontweight="bold"
+)
+
+axes[0, 2].axis("off")
+
+
+# ------------------------------------------------------------
+# FINAL OVERLAY
+# ------------------------------------------------------------
+
+axes[1, 0].imshow(
+    refined_overlay
+)
+
+axes[1, 0].set_title(
+    f"4. Grad-CAM Overlay\n"
+    f"{predicted_class} ({confidence_value:.2f}%)",
+    fontsize=13,
+    fontweight="bold"
+)
+
+axes[1, 0].axis("off")
+
+
+# ------------------------------------------------------------
+# REGION ANALYSIS
+# ------------------------------------------------------------
+
+axes[1, 1].imshow(
+    contour_image
+)
+
+axes[1, 1].set_title(
+    "5. Activation Region",
+    fontsize=13,
+    fontweight="bold"
+)
+
+axes[1, 1].axis("off")
+
+
+# ------------------------------------------------------------
+# QUANTITATIVE INFORMATION
+# ------------------------------------------------------------
+
+axes[1, 2].axis("off")
+
+
+analysis_text = (
+    "GRAD-CAM ANALYSIS\n\n"
+
+    f"Prediction:\n"
+    f"{predicted_class.upper()}\n\n"
+
+    f"Confidence:\n"
+    f"{confidence_value:.2f}%\n\n"
+
+    f"Activation Area:\n"
+    f"{activation_percentage:.2f}%\n\n"
+
+    f"Mean Activation:\n"
+    f"{mean_activation:.3f}\n\n"
+
+    f"Centroid:\n"
+    f"({centroid_x:.1f}, "
+    f"{centroid_y:.1f})\n\n"
+
+    f"Bounding Box:\n"
+    f"{w} × {h} pixels"
+)
+
+
+axes[1, 2].text(
+    0.05,
+    0.95,
+    analysis_text,
+    transform=axes[1, 2].transAxes,
+    verticalalignment="top",
+    fontsize=12
 )
 
 
 # ============================================================
-# 14. SAVE RESULTS
+# 28. FINAL FIGURE
 # ============================================================
 
-os.makedirs(
-    "results",
-    exist_ok=True
+plt.suptitle(
+    "Explainable AI Analysis using Grad-CAM",
+    fontsize=18,
+    fontweight="bold"
+)
+
+plt.tight_layout(
+    rect=[0, 0, 1, 0.95]
 )
 
 
-# Original
-plt.figure(figsize=(6, 6))
+# ============================================================
+# 29. SAVE FINAL ANALYSIS
+# ============================================================
 
-plt.imshow(display_image)
-
-plt.title("Original MRI")
-
-plt.axis("off")
-
-plt.tight_layout()
+analysis_path = (
+    "results/gradcam_complete_analysis.png"
+)
 
 plt.savefig(
-    "results/original_mri.jpg",
-    dpi=300,
-    bbox_inches="tight"
-)
-
-plt.close()
-
-
-# Grad-CAM heatmap
-plt.figure(figsize=(6, 6))
-
-plt.imshow(
-    grayscale_cam,
-    cmap="jet"
-)
-
-plt.title(
-    f"Grad-CAM Heatmap\n"
-    f"Prediction: {predicted_class}"
-)
-
-plt.axis("off")
-
-plt.tight_layout()
-
-plt.savefig(
-    "results/gradcam_heatmap.jpg",
-    dpi=300,
-    bbox_inches="tight"
-)
-
-plt.close()
-
-
-# Overlay
-plt.figure(figsize=(6, 6))
-
-plt.imshow(visualization)
-
-plt.title(
-    f"Grad-CAM Explanation\n"
-    f"Prediction: {predicted_class}\n"
-    f"Confidence: {confidence_value:.2f}%"
-)
-
-plt.axis("off")
-
-plt.tight_layout()
-
-plt.savefig(
-    "results/gradcam_overlay.jpg",
-    dpi=300,
-    bbox_inches="tight"
-)
-
-plt.close()
-
-
-# ============================================================
-# 15. CREATE COMBINED FIGURE
-# ============================================================
-
-plt.figure(figsize=(15, 5))
-
-
-# Original
-plt.subplot(1, 3, 1)
-
-plt.imshow(display_image)
-
-plt.title("Original MRI")
-
-plt.axis("off")
-
-
-# Heatmap
-plt.subplot(1, 3, 2)
-
-plt.imshow(
-    grayscale_cam,
-    cmap="jet"
-)
-
-plt.title("Grad-CAM Heatmap")
-
-plt.axis("off")
-
-
-# Overlay
-plt.subplot(1, 3, 3)
-
-plt.imshow(visualization)
-
-plt.title(
-    f"Grad-CAM Overlay\n"
-    f"{predicted_class} ({confidence_value:.2f}%)"
-)
-
-plt.axis("off")
-
-
-plt.tight_layout()
-
-plt.savefig(
-    "results/gradcam_analysis.jpg",
+    analysis_path,
     dpi=300,
     bbox_inches="tight"
 )
@@ -341,35 +367,123 @@ plt.show()
 
 
 # ============================================================
-# 16. FINAL OUTPUT
+# 30. SAVE NUMERICAL REPORT
+# ============================================================
+
+report_path = (
+    "results/gradcam_analysis.txt"
+)
+
+with open(
+    report_path,
+    "w"
+) as f:
+
+    f.write(
+        "GRAD-CAM ANALYSIS REPORT\n"
+    )
+
+    f.write(
+        "========================\n\n"
+    )
+
+    f.write(
+        f"Prediction: "
+        f"{predicted_class}\n"
+    )
+
+    f.write(
+        f"Confidence: "
+        f"{confidence_value:.2f}%\n"
+    )
+
+    f.write(
+        f"Activation Area: "
+        f"{activation_percentage:.2f}%\n"
+    )
+
+    f.write(
+        f"Mean Activation: "
+        f"{mean_activation:.4f}\n"
+    )
+
+    f.write(
+        f"Maximum Activation: "
+        f"{max_activation:.4f}\n"
+    )
+
+    f.write(
+        f"Centroid: "
+        f"({centroid_x:.2f}, "
+        f"{centroid_y:.2f})\n"
+    )
+
+    f.write(
+        f"Bounding Box: "
+        f"x={x}, y={y}, "
+        f"width={w}, height={h}\n"
+    )
+
+
+# ============================================================
+# 31. FINAL OUTPUT
 # ============================================================
 
 print("\n======================================")
-print("Grad-CAM Analysis Completed!")
+print("   GRAD-CAM ANALYSIS COMPLETED")
 print("======================================")
 
-print("\nPrediction:", predicted_class)
-
 print(
-    f"Confidence: {confidence_value:.2f}%"
-)
-
-print("\nGenerated files:")
-
-print(
-    "results/original_mri.jpg"
+    "\nPrediction:",
+    predicted_class
 )
 
 print(
-    "results/gradcam_heatmap.jpg"
+    f"Confidence: "
+    f"{confidence_value:.2f}%"
 )
 
 print(
-    "results/gradcam_overlay.jpg"
+    f"Activation Area: "
+    f"{activation_percentage:.2f}%"
 )
 
 print(
-    "results/gradcam_analysis.jpg"
+    f"Centroid: "
+    f"({centroid_x:.1f}, "
+    f"{centroid_y:.1f})"
 )
 
-print("\nDone!")
+print(
+    "\nFinal Analysis saved to:"
+)
+
+print(
+    os.path.abspath(
+        analysis_path
+    )
+)
+
+print(
+    "\nRegion Analysis saved to:"
+)
+
+print(
+    os.path.abspath(
+        contour_path
+    )
+)
+
+print(
+    "\nNumerical Report saved to:"
+)
+
+print(
+    os.path.abspath(
+        report_path
+    )
+)
+
+print(
+    "\nProcess finished successfully!"
+)

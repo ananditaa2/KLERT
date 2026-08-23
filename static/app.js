@@ -455,8 +455,18 @@ document.addEventListener("DOMContentLoaded", () => {
         diagnosisPill.className = `diagnosis-type-pill ${data.prediction}`;
         confidenceNum.textContent = `${data.confidence.toFixed(1)}%`;
 
-        activeModelTag.innerHTML = `<i data-lucide="cpu"></i> ${data.model_name}`;
-        targetLayerTag.innerHTML = `<i data-lucide="layers"></i> ${data.metadata.target_layer}`;
+        if (activeModelTag) activeModelTag.innerHTML = `<i data-lucide="cpu"></i> ${data.model_name}`;
+
+        const tumorDefinitions = {
+            "glioma": "<strong>Glioma:</strong> A type of brain tumor originating from supportive tissue cells in the brain.",
+            "meningioma": "<strong>Meningioma:</strong> A tumor growing in the outer protective membranes covering the brain.",
+            "pituitary": "<strong>Pituitary Tumor:</strong> A tumor located at the base of the brain near the pituitary gland.",
+            "notumor": "<strong>Normal Scan (No Tumor):</strong> The MRI scan shows healthy brain tissue with no tumor detected."
+        };
+        const tumorDefText = document.getElementById("tumorDefText");
+        if (tumorDefText) {
+            tumorDefText.innerHTML = tumorDefinitions[data.prediction] || `<strong>${data.label}:</strong> Analysis complete.`;
+        }
 
         imgCombined.src = data.images.combined;
         imgOverlay.src = data.images.overlay;
@@ -473,7 +483,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderProbabilityBars(probs, predictedClass) {
         probabilityList.innerHTML = "";
-        const classNames = { glioma: "Glioma", meningioma: "Meningioma", notumor: "No Tumor (Healthy)", pituitary: "Pituitary Tumor" };
+        const classNames = { glioma: "Glioma", meningioma: "Meningioma", notumor: "Normal Scan (No Tumor)", pituitary: "Pituitary Tumor" };
 
         for (const [cls, pct] of Object.entries(probs)) {
             const isWinner = cls === predictedClass;
@@ -813,6 +823,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Run Initial Loaders
     checkSystemHealth();
-    loadSamples();
+    // loadSamples();
     loadPatients();
 });

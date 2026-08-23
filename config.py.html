@@ -1,0 +1,62 @@
+<html>
+<head>
+<title>config.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #5f826b; font-style: italic;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #7a7e85;}
+.s4 { color: #bcbec4;}
+.s5 { color: #6aab73;}
+.s6 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#191a1c">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+config.py</font>
+</center></td></tr></table>
+<pre><span class="s0">&quot;&quot;&quot; 
+Configuration for the local-dataset variant of the API. 
+ 
+DATASET_ROOT is the one folder on this machine the API is allowed to read 
+MRI/mask series from. Every path a client sends in is resolved relative to 
+this root and checked to make sure it can't escape it (no &quot;..&quot;, no absolute 
+paths, no symlink tricks) - otherwise any client with a valid API key could 
+ask the server to read arbitrary files off disk. 
+&quot;&quot;&quot;</span>
+
+<span class="s2">import </span><span class="s1">os</span>
+<span class="s2">from </span><span class="s1">pathlib </span><span class="s2">import </span><span class="s1">Path</span>
+<span class="s2">from </span><span class="s1">fastapi </span><span class="s2">import </span><span class="s1">HTTPException</span>
+
+<span class="s3"># Set this in your .env, e.g.:</span>
+<span class="s3">#   DATASET_ROOT=/data/Brain-Tumor-Progression</span>
+<span class="s1">DATASET_ROOT </span><span class="s4">= </span><span class="s1">Path</span><span class="s4">(</span><span class="s1">os</span><span class="s4">.</span><span class="s1">environ</span><span class="s4">.</span><span class="s1">get</span><span class="s4">(</span><span class="s5">&quot;DATASET_ROOT&quot;</span><span class="s4">, </span><span class="s5">&quot;./data&quot;</span><span class="s4">)).</span><span class="s1">resolve</span><span class="s4">()</span>
+
+
+<span class="s2">def </span><span class="s1">resolve_dataset_path</span><span class="s4">(</span><span class="s1">relative_path</span><span class="s4">: </span><span class="s1">str</span><span class="s4">) </span><span class="s1">-&gt; Path</span><span class="s4">:</span>
+    <span class="s0">&quot;&quot;&quot; 
+    Turns a client-supplied relative path (e.g. &quot;PGBM-001/.../11.000000-T1post-03326&quot;) 
+    into an absolute path, guaranteed to stay inside DATASET_ROOT. 
+    &quot;&quot;&quot;</span>
+    <span class="s1">candidate </span><span class="s4">= (</span><span class="s1">DATASET_ROOT </span><span class="s4">/ </span><span class="s1">relative_path</span><span class="s4">).</span><span class="s1">resolve</span><span class="s4">()</span>
+
+    <span class="s2">if not </span><span class="s1">candidate</span><span class="s4">.</span><span class="s1">is_relative_to</span><span class="s4">(</span><span class="s1">DATASET_ROOT</span><span class="s4">):</span>
+        <span class="s2">raise </span><span class="s1">HTTPException</span><span class="s4">(</span>
+            <span class="s1">status_code</span><span class="s4">=</span><span class="s6">400</span><span class="s4">,</span>
+            <span class="s1">detail</span><span class="s4">=</span><span class="s5">&quot;Path escapes the configured dataset root - not allowed.&quot;</span><span class="s4">,</span>
+        <span class="s4">)</span>
+
+    <span class="s2">if not </span><span class="s1">candidate</span><span class="s4">.</span><span class="s1">exists</span><span class="s4">():</span>
+        <span class="s2">raise </span><span class="s1">HTTPException</span><span class="s4">(</span>
+            <span class="s1">status_code</span><span class="s4">=</span><span class="s6">404</span><span class="s4">,</span>
+            <span class="s1">detail</span><span class="s4">=</span><span class="s5">f&quot;No such path under dataset root: </span><span class="s2">{</span><span class="s1">relative_path</span><span class="s2">}</span><span class="s5">&quot;</span><span class="s4">,</span>
+        <span class="s4">)</span>
+
+    <span class="s2">return </span><span class="s1">candidate</span>
+</pre>
+</body>
+</html>

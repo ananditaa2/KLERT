@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>dataloader.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #2aacb8;}
+.s4 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#191a1c">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+dataloader.py</font>
+</center></td></tr></table>
+<pre><span class="s0">from </span><span class="s1">torch</span><span class="s2">.</span><span class="s1">utils</span><span class="s2">.</span><span class="s1">data </span><span class="s0">import </span><span class="s1">DataLoader</span>
+
+<span class="s0">from </span><span class="s1">dataset</span><span class="s2">.</span><span class="s1">tumor_dataset </span><span class="s0">import </span><span class="s2">(</span>
+    <span class="s1">train_dataset</span><span class="s2">,</span>
+    <span class="s1">test_dataset</span>
+<span class="s2">)</span>
+
+
+<span class="s1">train_loader </span><span class="s2">= </span><span class="s1">DataLoader</span><span class="s2">(</span>
+    <span class="s1">train_dataset</span><span class="s2">,</span>
+    <span class="s1">batch_size</span><span class="s2">=</span><span class="s3">32</span><span class="s2">,</span>
+    <span class="s1">shuffle</span><span class="s2">=</span><span class="s0">True</span>
+<span class="s2">)</span>
+
+<span class="s1">test_loader </span><span class="s2">= </span><span class="s1">DataLoader</span><span class="s2">(</span>
+    <span class="s1">test_dataset</span><span class="s2">,</span>
+    <span class="s1">batch_size</span><span class="s2">=</span><span class="s3">32</span><span class="s2">,</span>
+    <span class="s1">shuffle</span><span class="s2">=</span><span class="s0">False</span>
+<span class="s2">)</span>
+
+
+<span class="s1">print</span><span class="s2">(</span><span class="s4">&quot;Training samples:&quot;</span><span class="s2">, </span><span class="s1">len</span><span class="s2">(</span><span class="s1">train_dataset</span><span class="s2">))</span>
+<span class="s1">print</span><span class="s2">(</span><span class="s4">&quot;Testing samples:&quot;</span><span class="s2">, </span><span class="s1">len</span><span class="s2">(</span><span class="s1">test_dataset</span><span class="s2">))</span>
+
+<span class="s1">print</span><span class="s2">(</span><span class="s4">&quot;Training batches:&quot;</span><span class="s2">, </span><span class="s1">len</span><span class="s2">(</span><span class="s1">train_loader</span><span class="s2">))</span>
+<span class="s1">print</span><span class="s2">(</span><span class="s4">&quot;Testing batches:&quot;</span><span class="s2">, </span><span class="s1">len</span><span class="s2">(</span><span class="s1">test_loader</span><span class="s2">))</span></pre>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<html>
+<head>
+<title>main_local.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #5f826b; font-style: italic;}
+.s1 { color: #bcbec4;}
+.s2 { color: #cf8e6d;}
+.s3 { color: #bcbec4;}
+.s4 { color: #6aab73;}
+.s5 { color: #7a7e85;}
+.s6 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#191a1c">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+main_local.py</font>
+</center></td></tr></table>
+<pre><span class="s0">&quot;&quot;&quot; 
+KLERT MONITORING agent API - LOCAL DATASET VARIANT. 
+ 
+Use this instead of MONITORING/api/main.py when the DICOM dataset already 
+lives on the same machine as the API server. Clients send the relative 
+folder path to a series instead of uploading a zip; the server reads it 
+straight off disk. 
+ 
+Same auth model as main.py: every endpoint needs an X-API-Key header, 
+checked against the per-agent env vars in MONITORING/api/security.py. 
+ 
+Setup: 
+    1. Put the dataset somewhere on this machine, e.g. /data/Brain-Tumor-Progression 
+    2. Add to .env:  DATASET_ROOT=/data/Brain-Tumor-Progression 
+    3. Run:  uvicorn MONITORING.api.main_local:app --reload --port 8000 
+&quot;&quot;&quot;</span>
+
+<span class="s2">from </span><span class="s1">typing </span><span class="s2">import </span><span class="s1">Optional</span>
+
+<span class="s2">from </span><span class="s1">fastapi </span><span class="s2">import </span><span class="s1">Depends</span><span class="s3">, </span><span class="s1">FastAPI</span><span class="s3">, </span><span class="s1">HTTPException</span>
+<span class="s2">from </span><span class="s1">fastapi</span><span class="s3">.</span><span class="s1">middleware</span><span class="s3">.</span><span class="s1">cors </span><span class="s2">import </span><span class="s1">CORSMiddleware</span>
+<span class="s2">from </span><span class="s1">pydantic </span><span class="s2">import </span><span class="s1">BaseModel</span>
+
+<span class="s2">from </span><span class="s1">MONITORING</span><span class="s3">.</span><span class="s1">api</span><span class="s3">.</span><span class="s1">security </span><span class="s2">import </span><span class="s1">require_agent_key</span>
+
+<span class="s2">try</span><span class="s3">:</span>
+    <span class="s2">from </span><span class="s1">MONITORING</span><span class="s3">.</span><span class="s1">api</span><span class="s3">.</span><span class="s1">config </span><span class="s2">import </span><span class="s1">resolve_dataset_path</span>
+<span class="s2">except </span><span class="s1">ImportError</span><span class="s3">:</span>
+    <span class="s2">from </span><span class="s1">config </span><span class="s2">import </span><span class="s1">resolve_dataset_path</span>
+
+<span class="s1">app </span><span class="s3">= </span><span class="s1">FastAPI</span><span class="s3">(</span>
+    <span class="s1">title</span><span class="s3">=</span><span class="s4">&quot;DeepCortex System Monitoring Agent API (local dataset)&quot;</span><span class="s3">,</span>
+    <span class="s1">version</span><span class="s3">=</span><span class="s4">&quot;1.0.0&quot;</span><span class="s3">,</span>
+<span class="s3">)</span>
+
+<span class="s1">app</span><span class="s3">.</span><span class="s1">add_middleware</span><span class="s3">(</span>
+    <span class="s1">CORSMiddleware</span><span class="s3">,</span>
+    <span class="s1">allow_origins</span><span class="s3">=[</span><span class="s4">&quot;*&quot;</span><span class="s3">],</span>
+    <span class="s1">allow_credentials</span><span class="s3">=</span><span class="s2">True</span><span class="s3">,</span>
+    <span class="s1">allow_methods</span><span class="s3">=[</span><span class="s4">&quot;*&quot;</span><span class="s3">],</span>
+    <span class="s1">allow_headers</span><span class="s3">=[</span><span class="s4">&quot;*&quot;</span><span class="s3">],</span>
+<span class="s3">)</span>
+
+
+<span class="s5"># --------------------------------------------------------------------------</span>
+<span class="s5"># 1. Full pipeline (orchestrator)</span>
+<span class="s5"># --------------------------------------------------------------------------</span>
+
+<span class="s2">class </span><span class="s1">PipelineRequest</span><span class="s3">(</span><span class="s1">BaseModel</span><span class="s3">):</span>
+    <span class="s1">patient_id</span><span class="s3">: </span><span class="s1">str</span>
+    <span class="s1">baseline_mri_path</span><span class="s3">: </span><span class="s1">str      </span><span class="s5"># e.g. &quot;PGBM-019/10-02-1991-.../11.000000-T1post-35950&quot;</span>
+    <span class="s1">followup_mri_path</span><span class="s3">: </span><span class="s1">str</span>
+    <span class="s1">baseline_mask_path</span><span class="s3">: </span><span class="s1">str</span>
+    <span class="s1">followup_mask_path</span><span class="s3">: </span><span class="s1">str</span>
+
+
+<span class="s3">@</span><span class="s1">app</span><span class="s3">.</span><span class="s1">post</span><span class="s3">(</span><span class="s4">&quot;/agents/pipeline/run&quot;</span><span class="s3">, </span><span class="s1">dependencies</span><span class="s3">=[</span><span class="s1">Depends</span><span class="s3">(</span><span class="s1">require_agent_key</span><span class="s3">(</span><span class="s4">&quot;pipeline&quot;</span><span class="s3">))])</span>
+<span class="s2">async def </span><span class="s1">run_pipeline</span><span class="s3">(</span><span class="s1">body</span><span class="s3">: </span><span class="s1">PipelineRequest</span><span class="s3">):</span>
+    <span class="s2">try</span><span class="s3">:</span>
+        <span class="s2">from </span><span class="s1">MONITORING</span><span class="s3">.</span><span class="s1">tools</span><span class="s3">.</span><span class="s1">dicom_loader </span><span class="s2">import </span><span class="s1">load_dicom_series</span>
+        <span class="s2">from </span><span class="s1">MONITORING</span><span class="s3">.</span><span class="s1">tools</span><span class="s3">.</span><span class="s1">mask_loader </span><span class="s2">import </span><span class="s1">load_mask_series</span>
+        <span class="s2">from </span><span class="s1">MONITORING</span><span class="s3">.</span><span class="s1">tools</span><span class="s3">.</span><span class="s1">registration </span><span class="s2">import </span><span class="s1">register_followup_to_baseline</span>
+        <span class="s2">from </span><span class="s1">MONITORING</span><span class="s3">.</span><span class="s1">tools</span><span class="s3">.</span><span class="s1">mask_registration </span><span class="s2">import </span><span class="s1">transform_mask_to_baseline</span>
+        <span class="s2">from </span><span class="s1">MONITORING</span><span class="s3">.</span><span class="s1">agents</span><span class="s3">.</span><span class="s1">orchestrator </span><span class="s2">import </span><span class="s1">app </span><span class="s2">as </span><span class="s1">pipeline_app</span>
+
+        <span class="s1">b_mri </span><span class="s3">= </span><span class="s1">load_dicom_series</span><span class="s3">(</span><span class="s1">str</span><span class="s3">(</span><span class="s1">resolve_dataset_path</span><span class="s3">(</span><span class="s1">body</span><span class="s3">.</span><span class="s1">baseline_mri_path</span><span class="s3">)))</span>
+        <span class="s1">f_mri </span><span class="s3">= </span><span class="s1">load_dicom_series</span><span class="s3">(</span><span class="s1">str</span><span class="s3">(</span><span class="s1">resolve_dataset_path</span><span class="s3">(</span><span class="s1">body</span><span class="s3">.</span><span class="s1">followup_mri_path</span><span class="s3">)))</span>
+        <span class="s1">b_mask </span><span class="s3">= </span><span class="s1">load_mask_series</span><span class="s3">(</span><span class="s1">str</span><span class="s3">(</span><span class="s1">resolve_dataset_path</span><span class="s3">(</span><span class="s1">body</span><span class="s3">.</span><span class="s1">baseline_mask_path</span><span class="s3">)))</span>
+        <span class="s1">f_mask </span><span class="s3">= </span><span class="s1">load_mask_series</span><span class="s3">(</span><span class="s1">str</span><span class="s3">(</span><span class="s1">resolve_dataset_path</span><span class="s3">(</span><span class="s1">body</span><span class="s3">.</span><span class="s1">followup_mask_path</span><span class="s3">)))</span>
+
+        <span class="s5"># Perform registration to create registered_followup_mask</span>
+        <span class="s2">try</span><span class="s3">:</span>
+            <span class="s1">_</span><span class="s3">, </span><span class="s1">reg_transform </span><span class="s3">= </span><span class="s1">register_followup_to_baseline</span><span class="s3">(</span><span class="s1">b_mri</span><span class="s3">, </span><span class="s1">f_mri</span><span class="s3">)</span>
+            <span class="s1">reg_f_mask </span><span class="s3">= </span><span class="s1">transform_mask_to_baseline</span><span class="s3">(</span><span class="s1">f_mask</span><span class="s3">, </span><span class="s1">b_mri</span><span class="s3">, </span><span class="s1">reg_transform</span><span class="s3">)</span>
+        <span class="s2">except </span><span class="s1">Exception </span><span class="s2">as </span><span class="s1">reg_err</span><span class="s3">:</span>
+            <span class="s1">print</span><span class="s3">(</span><span class="s4">f&quot;Registration warning (using raw followup_mask): </span><span class="s2">{</span><span class="s1">reg_err</span><span class="s2">}</span><span class="s4">&quot;</span><span class="s3">)</span>
+            <span class="s1">reg_f_mask </span><span class="s3">= </span><span class="s1">f_mask</span>
+
+        <span class="s1">state </span><span class="s3">= {</span>
+            <span class="s4">&quot;patient_id&quot;</span><span class="s3">: </span><span class="s1">body</span><span class="s3">.</span><span class="s1">patient_id</span><span class="s3">,</span>
+            <span class="s4">&quot;baseline_mri&quot;</span><span class="s3">: </span><span class="s1">b_mri</span><span class="s3">,</span>
+            <span class="s4">&quot;followup_mri&quot;</span><span class="s3">: </span><span class="s1">f_mri</span><span class="s3">,</span>
+            <span class="s4">&quot;baseline_mask&quot;</span><span class="s3">: </span><span class="s1">b_mask</span><span class="s3">,</span>
+            <span class="s4">&quot;followup_mask&quot;</span><span class="s3">: </span><span class="s1">f_mask</span><span class="s3">,</span>
+            <span class="s4">&quot;registered_followup_mask&quot;</span><span class="s3">: </span><span class="s1">reg_f_mask</span><span class="s3">,</span>
+        <span class="s3">}</span>
+        <span class="s1">result </span><span class="s3">= </span><span class="s1">pipeline_app</span><span class="s3">.</span><span class="s1">invoke</span><span class="s3">(</span><span class="s1">state</span><span class="s3">)</span>
+
+        <span class="s2">return </span><span class="s3">{</span>
+            <span class="s4">&quot;monitoring_report&quot;</span><span class="s3">: </span><span class="s1">result</span><span class="s3">.</span><span class="s1">get</span><span class="s3">(</span><span class="s4">&quot;monitoring_report&quot;</span><span class="s3">),</span>
+            <span class="s4">&quot;baseline_visualization&quot;</span><span class="s3">: </span><span class="s1">result</span><span class="s3">.</span><span class="s1">get</span><span class="s3">(</span><span class="s4">&quot;baseline_visualization&quot;</span><span class="s3">),</span>
+            <span class="s4">&quot;followup_visualization&quot;</span><span class="s3">: </span><span class="s1">result</span><span class="s3">.</span><span class="s1">get</span><span class="s3">(</span><span class="s4">&quot;followup_visualization&quot;</span><span class="s3">),</span>
+            <span class="s4">&quot;difference_visualization&quot;</span><span class="s3">: </span><span class="s1">result</span><span class="s3">.</span><span class="s1">get</span><span class="s3">(</span><span class="s4">&quot;difference_visualization&quot;</span><span class="s3">),</span>
+            <span class="s4">&quot;status&quot;</span><span class="s3">: </span><span class="s1">result</span><span class="s3">.</span><span class="s1">get</span><span class="s3">(</span><span class="s4">&quot;status&quot;</span><span class="s3">)</span>
+        <span class="s3">}</span>
+    <span class="s2">except </span><span class="s1">Exception </span><span class="s2">as </span><span class="s1">exc</span><span class="s3">:</span>
+        <span class="s2">raise </span><span class="s1">HTTPException</span><span class="s3">(</span><span class="s1">status_code</span><span class="s3">=</span><span class="s6">500</span><span class="s3">, </span><span class="s1">detail</span><span class="s3">=</span><span class="s4">f&quot;Pipeline failed: </span><span class="s2">{</span><span class="s1">exc</span><span class="s2">}</span><span class="s4">&quot;</span><span class="s3">)</span>
+
+
+<span class="s5"># --------------------------------------------------------------------------</span>
+<span class="s5"># 2. Mask analysis agent</span>
+<span class="s5"># --------------------------------------------------------------------------</span>
+
+<span class="s2">class </span><span class="s1">MaskAnalysisRequest</span><span class="s3">(</span><span class="s1">BaseModel</span><span class="s3">):</span>
+    <span class="s1">patient_id</span><span class="s3">: </span><span class="s1">str</span>
+    <span class="s1">baseline_mask_path</span><span class="s3">: </span><span class="s1">str</span>
+    <span class="s1">followup_mask_path</span><span class="s3">: </span><span class="s1">str</span>
+
+
+<span class="s3">@</span><span class="s1">app</span><span class="s3">.</span><span class="s1">post</span><span class="s3">(</span><span class="s4">&quot;/agents/mask-analysis&quot;</span><span class="s3">, </span><span class="s1">dependencies</span><span class="s3">=[</span><span class="s1">Depends</span><span class="s3">(</span><span class="s1">require_agent_key</span><span class="s3">(</span><span class="s4">&quot;mask_analysis&quot;</span><span class="s3">))])</span>
+<span class="s2">async def </span><span class="s1">run_mask_analysis</span><span class="s3">(</span><span class="s1">body</span><span class="s3">: </span><span class="s1">MaskAnalysisRequest</span><span class="s3">):</span>
+    <span class="s2">from </span><span class="s1">MONITORING</span><span class="s3">.</span><span class="s1">tools</span><span class="s3">.</span><span class="s1">mask_loader </span><span class="s2">import </span><span class="s1">load_mask_series</span>
+    <span class="s2">from </span><span class="s1">MONITORING</span><span class="s3">.</span><span class="s1">agents</span><span class="s3">.</span><span class="s1">mask_analysis_agent </span><span class="s2">import </span><span class="s1">mask_analysis_agent</span>
+
+    <span class="s2">try</span><span class="s3">:</span>
+        <span class="s1">state </span><span class="s3">= {</span>
+            <span class="s4">&quot;patient_id&quot;</span><span class="s3">: </span><span class="s1">body</span><span class="s3">.</span><span class="s1">patient_id</span><span class="s3">,</span>
+            <span class="s4">&quot;baseline_mask&quot;</span><span class="s3">: </span><span class="s1">load_mask_series</span><span class="s3">(</span><span class="s1">str</span><span class="s3">(</span><span class="s1">resolve_dataset_path</span><span class="s3">(</span><span class="s1">body</span><span class="s3">.</span><span class="s1">baseline_mask_path</span><span class="s3">))),</span>
+            <span class="s4">&quot;followup_mask&quot;</span><span class="s3">: </span><span class="s1">load_mask_series</span><span class="s3">(</span><span class="s1">str</span><span class="s3">(</span><span class="s1">resolve_dataset_path</span><span class="s3">(</span><span class="s1">body</span><span class="s3">.</span><span class="s1">followup_mask_path</span><span class="s3">))),</span>
+        <span class="s3">}</span>
+        <span class="s2">return </span><span class="s1">mask_analysis_agent</span><span class="s3">(</span><span class="s1">state</span><span class="s3">)</span>
+    <span class="s2">except </span><span class="s1">Exception </span><span class="s2">as </span><span class="s1">exc</span><span class="s3">:</span>
+        <span class="s2">raise </span><span class="s1">HTTPException</span><span class="s3">(</span><span class="s1">status_code</span><span class="s3">=</span><span class="s6">500</span><span class="s3">, </span><span class="s1">detail</span><span class="s3">=</span><span class="s1">str</span><span class="s3">(</span><span class="s1">exc</span><span class="s3">))</span>
+
+
+<span class="s5"># --------------------------------------------------------------------------</span>
+<span class="s5"># 3. Comparison agent</span>
+<span class="s5"># --------------------------------------------------------------------------</span>
+
+<span class="s2">class </span><span class="s1">ComparisonRequest</span><span class="s3">(</span><span class="s1">BaseModel</span><span class="s3">):</span>
+    <span class="s1">patient_id</span><span class="s3">: </span><span class="s1">str</span>
+    <span class="s1">baseline_mask_path</span><span class="s3">: </span><span class="s1">str</span>
+    <span class="s1">followup_mask_path</span><span class="s3">: </span><span class="s1">str</span>
+    <span class="s1">registered_followup_mask_path</span><span class="s3">: </span><span class="s1">Optional</span><span class="s3">[</span><span class="s1">str</span><span class="s3">] = </span><span class="s2">None</span>
+
+
+<span class="s3">@</span><span class="s1">app</span><span class="s3">.</span><span class="s1">post</span><span class="s3">(</span><span class="s4">&quot;/agents/comparison&quot;</span><span class="s3">, </span><span class="s1">dependencies</span><span class="s3">=[</span><span class="s1">Depends</span><span class="s3">(</span><span class="s1">require_agent_key</span><span class="s3">(</span><span class="s4">&quot;comparison&quot;</span><span class="s3">))])</span>
+<span class="s2">async def </span><span class="s1">run_comparison</span><span class="s3">(</span><span class="s1">body</span><span class="s3">: </span><span class="s1">ComparisonRequest</span><span class="s3">):</span>
+    <span class="s2">from </span><span class="s1">MONITORING</span><span class="s3">.</span><span class="s1">tools</span><span class="s3">.</span><span class="s1">mask_loader </span><span class="s2">import </span><span class="s1">load_mask_series</span>
+    <span class="s2">from </span><span class="s1">MONITORING</span><span class="s3">.</span><span class="s1">agents</span><span class="s3">.</span><span class="s1">comparison_agent </span><span class="s2">import </span><span class="s1">comparison_agent</span>
+
+    <span class="s2">try</span><span class="s3">:</span>
+        <span class="s1">f_mask </span><span class="s3">= </span><span class="s1">load_mask_series</span><span class="s3">(</span><span class="s1">str</span><span class="s3">(</span><span class="s1">resolve_dataset_path</span><span class="s3">(</span><span class="s1">body</span><span class="s3">.</span><span class="s1">followup_mask_path</span><span class="s3">)))</span>
+        <span class="s1">reg_path </span><span class="s3">= </span><span class="s1">body</span><span class="s3">.</span><span class="s1">registered_followup_mask_path</span>
+        <span class="s1">reg_mask </span><span class="s3">= </span><span class="s1">load_mask_series</span><span class="s3">(</span><span class="s1">str</span><span class="s3">(</span><span class="s1">resolve_dataset_path</span><span class="s3">(</span><span class="s1">reg_path</span><span class="s3">))) </span><span class="s2">if </span><span class="s1">reg_path </span><span class="s2">else </span><span class="s1">f_mask</span>
+
+        <span class="s1">state </span><span class="s3">= {</span>
+            <span class="s4">&quot;patient_id&quot;</span><span class="s3">: </span><span class="s1">body</span><span class="s3">.</span><span class="s1">patient_id</span><span class="s3">,</span>
+            <span class="s4">&quot;baseline_mask&quot;</span><span class="s3">: </span><span class="s1">load_mask_series</span><span class="s3">(</span><span class="s1">str</span><span class="s3">(</span><span class="s1">resolve_dataset_path</span><span class="s3">(</span><span class="s1">body</span><span class="s3">.</span><span class="s1">baseline_mask_path</span><span class="s3">))),</span>
+            <span class="s4">&quot;followup_mask&quot;</span><span class="s3">: </span><span class="s1">f_mask</span><span class="s3">,</span>
+            <span class="s4">&quot;registered_followup_mask&quot;</span><span class="s3">: </span><span class="s1">reg_mask</span><span class="s3">,</span>
+        <span class="s3">}</span>
+        <span class="s2">return </span><span class="s1">comparison_agent</span><span class="s3">(</span><span class="s1">state</span><span class="s3">)</span>
+    <span class="s2">except </span><span class="s1">Exception </span><span class="s2">as </span><span class="s1">exc</span><span class="s3">:</span>
+        <span class="s2">raise </span><span class="s1">HTTPException</span><span class="s3">(</span><span class="s1">status_code</span><span class="s3">=</span><span class="s6">500</span><span class="s3">, </span><span class="s1">detail</span><span class="s3">=</span><span class="s1">str</span><span class="s3">(</span><span class="s1">exc</span><span class="s3">))</span>
+
+
+<span class="s5"># --------------------------------------------------------------------------</span>
+<span class="s5"># 4. Brain region agent</span>
+<span class="s5"># --------------------------------------------------------------------------</span>
+
+<span class="s2">class </span><span class="s1">BrainRegionRequest</span><span class="s3">(</span><span class="s1">BaseModel</span><span class="s3">):</span>
+    <span class="s1">patient_id</span><span class="s3">: </span><span class="s1">str</span>
+    <span class="s1">region_map</span><span class="s3">: </span><span class="s1">Optional</span><span class="s3">[</span><span class="s1">dict</span><span class="s3">] = </span><span class="s2">None</span>
+
+
+<span class="s3">@</span><span class="s1">app</span><span class="s3">.</span><span class="s1">post</span><span class="s3">(</span><span class="s4">&quot;/agents/brain-region&quot;</span><span class="s3">, </span><span class="s1">dependencies</span><span class="s3">=[</span><span class="s1">Depends</span><span class="s3">(</span><span class="s1">require_agent_key</span><span class="s3">(</span><span class="s4">&quot;brain_region&quot;</span><span class="s3">))])</span>
+<span class="s2">async def </span><span class="s1">run_brain_region</span><span class="s3">(</span><span class="s1">body</span><span class="s3">: </span><span class="s1">BrainRegionRequest</span><span class="s3">):</span>
+    <span class="s2">from </span><span class="s1">MONITORING</span><span class="s3">.</span><span class="s1">agents</span><span class="s3">.</span><span class="s1">brain_region_agent </span><span class="s2">import </span><span class="s1">brain_region_agent</span>
+
+    <span class="s1">state </span><span class="s3">= {</span><span class="s4">&quot;patient_id&quot;</span><span class="s3">: </span><span class="s1">body</span><span class="s3">.</span><span class="s1">patient_id</span><span class="s3">, </span><span class="s4">&quot;region_map&quot;</span><span class="s3">: </span><span class="s1">body</span><span class="s3">.</span><span class="s1">region_map</span><span class="s3">}</span>
+    <span class="s2">try</span><span class="s3">:</span>
+        <span class="s2">return </span><span class="s1">brain_region_agent</span><span class="s3">(</span><span class="s1">state</span><span class="s3">)</span>
+    <span class="s2">except </span><span class="s1">Exception </span><span class="s2">as </span><span class="s1">exc</span><span class="s3">:</span>
+        <span class="s2">raise </span><span class="s1">HTTPException</span><span class="s3">(</span><span class="s1">status_code</span><span class="s3">=</span><span class="s6">500</span><span class="s3">, </span><span class="s1">detail</span><span class="s3">=</span><span class="s1">str</span><span class="s3">(</span><span class="s1">exc</span><span class="s3">))</span>
+
+
+<span class="s5"># --------------------------------------------------------------------------</span>
+<span class="s5"># 5. Report agent</span>
+<span class="s5"># --------------------------------------------------------------------------</span>
+
+<span class="s2">class </span><span class="s1">ReportRequest</span><span class="s3">(</span><span class="s1">BaseModel</span><span class="s3">):</span>
+    <span class="s1">patient_id</span><span class="s3">: </span><span class="s1">str</span>
+    <span class="s1">comparison_results</span><span class="s3">: </span><span class="s1">dict</span>
+    <span class="s1">brain_region_result</span><span class="s3">: </span><span class="s1">Optional</span><span class="s3">[</span><span class="s1">dict</span><span class="s3">] = </span><span class="s2">None</span>
+
+
+<span class="s3">@</span><span class="s1">app</span><span class="s3">.</span><span class="s1">post</span><span class="s3">(</span><span class="s4">&quot;/agents/report&quot;</span><span class="s3">, </span><span class="s1">dependencies</span><span class="s3">=[</span><span class="s1">Depends</span><span class="s3">(</span><span class="s1">require_agent_key</span><span class="s3">(</span><span class="s4">&quot;report&quot;</span><span class="s3">))])</span>
+<span class="s2">async def </span><span class="s1">run_report</span><span class="s3">(</span><span class="s1">body</span><span class="s3">: </span><span class="s1">ReportRequest</span><span class="s3">):</span>
+    <span class="s2">from </span><span class="s1">MONITORING</span><span class="s3">.</span><span class="s1">agents</span><span class="s3">.</span><span class="s1">report_agent </span><span class="s2">import </span><span class="s1">report_agent</span>
+
+    <span class="s1">state </span><span class="s3">= </span><span class="s1">body</span><span class="s3">.</span><span class="s1">model_dump</span><span class="s3">()</span>
+    <span class="s2">try</span><span class="s3">:</span>
+        <span class="s2">return </span><span class="s1">report_agent</span><span class="s3">(</span><span class="s1">state</span><span class="s3">)</span>
+    <span class="s2">except </span><span class="s1">Exception </span><span class="s2">as </span><span class="s1">exc</span><span class="s3">:</span>
+        <span class="s2">raise </span><span class="s1">HTTPException</span><span class="s3">(</span><span class="s1">status_code</span><span class="s3">=</span><span class="s6">500</span><span class="s3">, </span><span class="s1">detail</span><span class="s3">=</span><span class="s1">str</span><span class="s3">(</span><span class="s1">exc</span><span class="s3">))</span>
+
+
+<span class="s3">@</span><span class="s1">app</span><span class="s3">.</span><span class="s1">get</span><span class="s3">(</span><span class="s4">&quot;/health&quot;</span><span class="s3">)</span>
+<span class="s2">async def </span><span class="s1">health</span><span class="s3">():</span>
+    <span class="s2">return </span><span class="s3">{</span><span class="s4">&quot;status&quot;</span><span class="s3">: </span><span class="s4">&quot;ok&quot;</span><span class="s3">, </span><span class="s4">&quot;dataset_root&quot;</span><span class="s3">: </span><span class="s1">str</span><span class="s3">(</span><span class="s1">resolve_dataset_path</span><span class="s3">.</span><span class="s1">__globals__</span><span class="s3">[</span><span class="s4">&quot;DATASET_ROOT&quot;</span><span class="s3">])}</span>
+</pre>
+</body>
+</html>

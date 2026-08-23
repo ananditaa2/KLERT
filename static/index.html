@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KLERT - Brain Scan Analysis Project</title>
+    <meta name="description" content="KLERT — Simple Brain MRI Scan Analysis & Tumor Classification Tool for Presentation and Evaluation.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js for progression chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="/static/style.css?v=9.0">
+</head>
+<body>
+
+    <!-- DEMO LOGIN OVERLAY -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="auth-split-panel">
+
+            <!-- LEFT: Project Info -->
+            <div class="auth-left-panel">
+                <div class="auth-logo-row">
+                    <div class="auth-logo-icon"><i data-lucide="brain"></i></div>
+                    <div>
+                        <div class="auth-logo-title">KLERT</div>
+                        <div class="auth-logo-sub">Brain Scan Analysis Project</div>
+                    </div>
+                </div>
+
+                <div class="auth-divider-line"></div>
+
+                <h2 class="auth-system-title">Brain MRI Classification &amp; Scan Comparison Tool</h2>
+                <p class="auth-system-desc">A simple computer vision application that detects brain tumor types from MRI scans and compares patient scans over time.</p>
+
+                <div class="auth-spec-list">
+                    <div class="auth-spec-row">
+                        <span class="auth-spec-label">Project Type</span>
+                        <span class="auth-spec-val">Brain Scan Classification Tool</span>
+                    </div>
+                    <div class="auth-spec-row">
+                        <span class="auth-spec-label">Models Used</span>
+                        <span class="auth-spec-val">Custom CNN · ResNet-18 · VGG-16</span>
+                    </div>
+                    <div class="auth-spec-row">
+                        <span class="auth-spec-label">Heatmap Tool</span>
+                        <span class="auth-spec-val">Visual Scan Highlights (Grad-CAM)</span>
+                    </div>
+                    <div class="auth-spec-row">
+                        <span class="auth-spec-label">Best Accuracy</span>
+                        <span class="auth-spec-val text-green">95.8% Correct Classification</span>
+                    </div>
+                </div>
+
+                <div class="auth-left-footer">
+                    <span class="auth-version-tag">KLERT — Student Project Presentation</span>
+                </div>
+            </div>
+
+            <!-- RIGHT: Login Form -->
+            <div class="auth-right-panel">
+                <div class="auth-form-header">
+                    <h3 class="auth-form-title">Project Demo Sign-In</h3>
+                    <p class="auth-form-sub">Select a role to start the demo presentation</p>
+                </div>
+
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label class="form-label"><i data-lucide="user"></i> Presenter Role</label>
+                        <select id="userRoleSelect" class="cyber-select">
+                            <option value="lead">Anandita — Student / Presenter</option>
+                            <option value="fellow">Evaluator — Teacher / Guest</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label"><i data-lucide="mail"></i> Demo User Name</label>
+                        <input type="text" id="usernameInput" class="cyber-input" value="anandita@project.demo" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label"><i data-lucide="lock"></i> Passcode</label>
+                        <input type="password" id="passwordInput" class="cyber-input" value="klert2026" required>
+                    </div>
+
+                    <div class="quick-fill-box">
+                        <button type="button" class="btn-quick-autofill" id="autoFillBtn">
+                            <i data-lucide="zap"></i> Auto-fill demo details
+                        </button>
+                    </div>
+
+                    <button type="submit" class="btn-login-submit" id="loginSubmitBtn">
+                        <span class="btn-content"><i data-lucide="log-in"></i> Start Demo Presentation</span>
+                        <span class="btn-loader" style="display: none;"><span class="spinner"></span> Opening App...</span>
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Top Header -->
+    <header class="app-header" id="appHeader" style="display: none;">
+        <div class="header-container">
+            <div class="brand-group">
+                <div class="brand-icon">
+                    <i data-lucide="brain"></i>
+                </div>
+                <div class="brand-text">
+                    <div class="brand-title">
+                        <span class="brand-name">KLERT</span>
+                        <span class="badge-simple">Brain Scan Project</span>
+                    </div>
+                    <p class="brand-subtitle">Simple Computer Vision Brain Scan Tool</p>
+                </div>
+            </div>
+
+            <!-- HORIZONTAL NAVIGATION TABS IN HEADER -->
+            <nav class="cockpit-tabs">
+                <button type="button" class="tab-nav-btn active" data-tab="overviewTab">
+                    <i data-lucide="home"></i>
+                    <span>Overview</span>
+                </button>
+                <button type="button" class="tab-nav-btn" data-tab="diagnosticTab">
+                    <i data-lucide="brain"></i>
+                    <span>Analyze Scan</span>
+                </button>
+                <button type="button" class="tab-nav-btn" data-tab="progressionTab">
+                    <i data-lucide="line-chart"></i>
+                    <span>Compare Scans</span>
+                </button>
+                <button type="button" class="tab-nav-btn" data-tab="benchmarksTab">
+                    <i data-lucide="bar-chart-2"></i>
+                    <span>Test Results</span>
+                </button>
+                <button type="button" class="tab-nav-btn" data-tab="assistantTab">
+                    <i data-lucide="book-open"></i>
+                    <span>Project Guide</span>
+                </button>
+            </nav>
+
+            <div class="header-status">
+                <div class="doctor-profile-badge">
+                    <i data-lucide="user"></i>
+                    <span id="activeDoctorName">Anandita</span>
+                    <button type="button" class="btn-logout" id="logoutBtn" title="Exit Demo">
+                        <i data-lucide="log-out"></i>
+                    </button>
+                </div>
+                <div class="status-indicator-cyber">
+                    <span class="pulse-dot-cyan"></span>
+                    <span class="status-text" id="serverStatusText">System Ready</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="cockpit-container" id="cockpitContainer" style="display: none;">
+
+        <!-- LEFT/MAIN CONTENT AREA -->
+        <div class="main-content-panes">
+
+            <!-- TAB 1: OVERVIEW -->
+            <div class="cockpit-pane active" id="overviewTab">
+                <section class="clinical-overview-dashboard">
+                    <div class="overview-main-grid">
+                        <div class="overview-modules-column">
+                            <div class="overview-section-header">
+                                <h1 class="clinical-page-title">Brain Scan Analysis Project</h1>
+                                <p class="clinical-page-desc">A simple tool that helps recognize brain tumor types from MRI scans and compare patient scans taken at different times.</p>
+                            </div>
+
+                            <!-- 4 Project Action Cards -->
+                            <div class="clinical-modules-grid">
+                                <div class="clinical-module-card" id="moduleDiagCard">
+                                    <div class="mod-header">
+                                        <div class="mod-icon mod-icon-blue"><i data-lucide="brain"></i></div>
+                                        <span class="mod-status-tag">Ready</span>
+                                    </div>
+                                    <h3 class="mod-title">Analyze Scan</h3>
+                                    <p class="mod-desc">Upload a brain MRI scan image to detect tumor type and view highlighted heatmap areas.</p>
+                                    <button type="button" class="btn-mod-action" id="jumpToDiagBtn">
+                                        Go to Analyze Scan <i data-lucide="arrow-right"></i>
+                                    </button>
+                                </div>
+
+                                <div class="clinical-module-card" id="moduleProgCard">
+                                    <div class="mod-header">
+                                        <div class="mod-icon mod-icon-pink"><i data-lucide="line-chart"></i></div>
+                                        <span class="mod-status-tag tag-pink">Patient Files</span>
+                                    </div>
+                                    <h3 class="mod-title">Compare Scans</h3>
+                                    <p class="mod-desc">Compare MRI scans taken on different dates to track changes in tumor size over time.</p>
+                                    <button type="button" class="btn-mod-action" id="jumpToProgBtn">
+                                        Go to Compare Scans <i data-lucide="arrow-right"></i>
+                                    </button>
+                                </div>
+
+                                <div class="clinical-module-card" id="moduleBenchCard">
+                                    <div class="mod-header">
+                                        <div class="mod-icon mod-icon-green"><i data-lucide="bar-chart-2"></i></div>
+                                        <span class="mod-status-tag tag-green">95.8% Accuracy</span>
+                                    </div>
+                                    <h3 class="mod-title">Test Results</h3>
+                                    <p class="mod-desc">View accuracy test results comparing different image recognition computer models.</p>
+                                    <button type="button" class="btn-mod-action" id="jumpToBenchBtn">
+                                        View Test Results <i data-lucide="arrow-right"></i>
+                                    </button>
+                                </div>
+
+                                <div class="clinical-module-card" id="moduleAssistCard">
+                                    <div class="mod-header">
+                                        <div class="mod-icon mod-icon-purple"><i data-lucide="book-open"></i></div>
+                                        <span class="mod-status-tag tag-purple">Guide</span>
+                                    </div>
+                                    <h3 class="mod-title">Project Guide</h3>
+                                    <p class="mod-desc">Read simple summaries and plain-language explanations of scan results and patient progress.</p>
+                                    <button type="button" class="btn-mod-action" id="jumpToAssistBtn">
+                                        Open Project Guide <i data-lucide="arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Quick Sample Cases -->
+                            <div class="quick-case-strip">
+                                <div class="quick-case-title">
+                                    <i data-lucide="folder"></i>
+                                    <span>Try Sample Test Scans:</span>
+                                </div>
+                                <div class="quick-case-buttons">
+                                    <button type="button" class="quick-case-btn" data-sample="sample1.jpg">
+                                        <span class="case-dot dot-glioma"></span> Sample #1: Glioma
+                                    </button>
+                                    <button type="button" class="quick-case-btn" data-sample="sample2.jpg">
+                                        <span class="case-dot dot-meningioma"></span> Sample #2: Meningioma
+                                    </button>
+                                    <button type="button" class="quick-case-btn" data-sample="sample3.jpg">
+                                        <span class="case-dot dot-notumor"></span> Sample #3: Normal Scan
+                                    </button>
+                                    <button type="button" class="quick-case-btn" data-sample="sample4.jpg">
+                                        <span class="case-dot dot-pituitary"></span> Sample #4: Pituitary
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Reference Column -->
+                        <div class="overview-hud-column">
+                            <div class="neural-hud-frame" id="hologramCard">
+                                <div class="hud-top-bar">
+                                    <span class="hud-title-mono"><i data-lucide="image"></i> Sample Brain Scan View</span>
+                                </div>
+
+                                <div class="hud-viewport-container">
+                                    <img src="/static/hero_brain_3d.jpg" alt="Sample Brain Scan" class="hologram-brain-img">
+                                </div>
+
+                                <div class="hud-bottom-bar">
+                                    <span class="hud-sensor"><i data-lucide="check-circle"></i> Brain MRI Sample Reference</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Features Section -->
+                <section class="landing-features-section">
+                    <div class="section-header">
+                        <h2 class="section-heading">Key Project Features</h2>
+                        <p>Designed to be simple, clear, and easy to present.</p>
+                    </div>
+
+                    <div class="features-grid">
+                        <div class="feature-card-cyber">
+                            <div class="feature-icon-cyber"><i data-lucide="eye"></i></div>
+                            <h3>Visual Heatmap Highlights</h3>
+                            <p>Highlights the specific area on the scan image that the model examined to make its decision.</p>
+                        </div>
+                        <div class="feature-card-cyber">
+                            <div class="feature-icon-cyber"><i data-lucide="layers"></i></div>
+                            <h3>Multiple Computer Models</h3>
+                            <p>Compares 3 standard computer vision neural networks (Custom CNN, ResNet-18, VGG-16).</p>
+                        </div>
+                        <div class="feature-card-cyber">
+                            <div class="feature-icon-cyber"><i data-lucide="sliders"></i></div>
+                            <h3>Interactive Opacity Slider</h3>
+                            <p>Easily slide the opacity to see the highlighted heatmap right on top of the original MRI image.</p>
+                        </div>
+                        <div class="feature-card-cyber">
+                            <div class="feature-icon-cyber"><i data-lucide="file-text"></i></div>
+                            <h3>Simple Summary Reports</h3>
+                            <p>Generates clear, easy-to-read text notes summarizing scan findings and progress.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- TAB 2: ANALYZE SCAN -->
+            <div class="cockpit-pane" id="diagnosticTab">
+                <div class="workspace-header-banner">
+                    <h2><i data-lucide="brain"></i> Analyze a Brain MRI Scan</h2>
+                    <p>Follow the 3 steps below: Select a model, upload an MRI scan image, and view instant results with highlighted heatmaps.</p>
+                </div>
+
+                <div class="main-layout">
+                    <!-- Left Column: Step 1 & Step 2 -->
+                    <section class="panel upload-panel">
+                        <!-- Step 1: Model Selection -->
+                        <div class="step-container">
+                            <div class="step-header">
+                                <span class="step-number">1</span>
+                                <div class="step-title-wrap">
+                                    <h3>Select Computer Model</h3>
+                                    <p>Choose an AI model for scan classification</p>
+                                </div>
+                            </div>
+
+                            <div class="model-options-grid">
+                                <button type="button" class="model-btn active" data-model="cnn">
+                                    <div class="model-btn-header">
+                                        <span class="model-name">Custom CNN</span>
+                                        <span class="model-badge badge-primary">95.8% Accuracy</span>
+                                    </div>
+                                    <span class="model-desc">Custom Brain Architecture</span>
+                                </button>
+                                <button type="button" class="model-btn" data-model="resnet">
+                                    <div class="model-btn-header">
+                                        <span class="model-name">ResNet-18</span>
+                                        <span class="model-badge badge-secondary">93.9% Accuracy</span>
+                                    </div>
+                                    <span class="model-desc">Pretrained Residual Net</span>
+                                </button>
+                                <button type="button" class="model-btn" data-model="vgg">
+                                    <div class="model-btn-header">
+                                        <span class="model-name">VGG-16</span>
+                                        <span class="model-badge badge-accent">92.2% Accuracy</span>
+                                    </div>
+                                    <span class="model-desc">Deep Feature Model</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Upload Scan -->
+                        <div class="step-container" style="margin-top: 1.25rem;">
+                            <div class="step-header">
+                                <span class="step-number">2</span>
+                                <div class="step-title-wrap">
+                                    <h3>Upload Brain MRI Scan</h3>
+                                    <p>Add a brain scan image (JPG or PNG)</p>
+                                </div>
+                            </div>
+
+                            <div class="drop-zone" id="dropZone">
+                                <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg" hidden>
+                                <div class="drop-zone-content">
+                                    <div class="upload-icon-circle"><i data-lucide="image-plus"></i></div>
+                                    <h3>Click or Drag &amp; Drop MRI Image</h3>
+                                    <p>Supports High-Res JPG, JPEG, PNG</p>
+                                    <button type="button" class="btn btn-cyber-outline" id="browseBtn">
+                                        <i data-lucide="folder-open"></i> Browse Files
+                                    </button>
+                                </div>
+                                <div class="upload-preview-container" id="uploadPreviewContainer" style="display: none;">
+                                    <img id="uploadPreviewImg" src="" alt="Uploaded Scan Preview">
+                                    <div class="preview-overlay">
+                                        <span class="preview-filename" id="previewFilename">image.jpg</span>
+                                        <button type="button" class="btn-icon" id="removeFileBtn" title="Remove file"><i data-lucide="x"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="action-footer" style="margin-top: 1.25rem;">
+                            <button type="button" class="btn btn-cyber-primary btn-block" id="analyzeBtn" disabled>
+                                <span class="btn-content"><i data-lucide="play"></i> Analyze Scan Now</span>
+                                <span class="btn-loader" style="display: none;"><span class="spinner"></span> Analyzing Scan...</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- Right Column: Step 3 (Results) -->
+                    <section class="panel results-panel" id="resultsPanel">
+                        <div class="step-header" style="margin-bottom: 1rem;">
+                            <span class="step-number">3</span>
+                            <div class="step-title-wrap">
+                                <h3>Scan Analysis Results</h3>
+                                <p>View diagnosis &amp; highlighted heatmaps</p>
+                            </div>
+                        </div>
+
+                        <div class="empty-state" id="emptyState">
+                            <div class="empty-icon-wrap"><i data-lucide="scan"></i></div>
+                            <h3>Awaiting MRI Scan Upload</h3>
+                            <p>Select a model in Step 1 and upload an MRI image in Step 2 to view classification results and heatmaps here.</p>
+                        </div>
+
+                        <div class="results-content" id="resultsContent" style="display: none;">
+                            <!-- Result Banner -->
+                            <div class="diagnosis-banner" id="diagnosisBanner">
+                                <div class="diagnosis-main">
+                                    <div class="diagnosis-type-pill" id="diagnosisPill">
+                                        <i data-lucide="alert-circle" id="diagnosisIcon"></i>
+                                        <span id="diagnosisLabel">PITUITARY TUMOR</span>
+                                    </div>
+                                    <div class="confidence-display">
+                                        <span class="confidence-num" id="confidenceNum">100.0%</span>
+                                        <span class="confidence-label">Confidence Score</span>
+                                    </div>
+                                </div>
+                                <div class="diagnosis-meta">
+                                    <span class="meta-tag" id="activeModelTag"><i data-lucide="cpu"></i> Custom BrainTumorCNN</span>
+                                </div>
+                            </div>
+
+                            <!-- Plain Language Explanation Box -->
+                            <div class="tumor-definition-box" id="tumorDefinitionBox">
+                                <div class="def-header"><i data-lucide="info"></i> <strong>About This Scan Type:</strong></div>
+                                <div class="def-text" id="tumorDefText">
+                                    <strong>Pituitary Tumor:</strong> A tumor located at the base of the brain near the pituitary gland.
+                                </div>
+                            </div>
+
+                            <!-- Visualizer Card -->
+                            <div class="visualizer-card">
+                                <div class="visualizer-nav">
+                                    <div class="view-tabs">
+                                        <button type="button" class="tab-btn active" data-view="combined"><i data-lucide="columns-3"></i> Side-by-Side</button>
+                                        <button type="button" class="tab-btn" data-view="overlay"><i data-lucide="layers"></i> Heatmap Overlay</button>
+                                        <button type="button" class="tab-btn" data-view="blend"><i data-lucide="sliders"></i> Opacity Slider</button>
+                                        <button type="button" class="tab-btn" data-view="heatmap"><i data-lucide="flame"></i> Heatmap Only</button>
+                                        <button type="button" class="tab-btn" data-view="original"><i data-lucide="image"></i> Original Scan</button>
+                                    </div>
+                                    <button type="button" class="btn-icon" id="fullscreenBtn" title="Fullscreen"><i data-lucide="maximize-2"></i></button>
+                                </div>
+
+                                <div class="viewer-viewport" id="viewerViewport">
+                                    <div class="view-pane active" id="paneCombined"><img id="imgCombined" src="" alt="Combined Scan View"></div>
+                                    <div class="view-pane" id="paneOverlay"><img id="imgOverlay" src="" alt="Heatmap Overlay"></div>
+                                    <div class="view-pane" id="paneHeatmap"><img id="imgHeatmap" src="" alt="Heatmap View"></div>
+                                    <div class="view-pane" id="paneOriginal"><img id="imgOriginal" src="" alt="Original Scan"></div>
+                                    <div class="view-pane blend-pane" id="paneBlend">
+                                        <div class="blend-canvas-container">
+                                            <img id="blendBaseImg" src="" alt="Base Scan" class="blend-base">
+                                            <img id="blendHeatmapImg" src="" alt="Heatmap Layer" class="blend-overlay">
+                                        </div>
+                                        <div class="blend-control-bar">
+                                            <span class="blend-label"><i data-lucide="eye"></i> Heatmap Opacity</span>
+                                            <input type="range" id="blendSlider" min="0" max="100" value="65" class="custom-range">
+                                            <span class="blend-value" id="blendValText">65%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Class Probabilities -->
+                            <div class="info-card">
+                                <div class="card-header"><i data-lucide="bar-chart-2"></i><h3>Scores for Each Scan Type</h3></div>
+                                <div class="probability-list" id="probabilityList"></div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- TAB 3: COMPARE SCANS -->
+            <div class="cockpit-pane" id="progressionTab">
+                <div class="workspace-header-banner">
+                    <h2><i data-lucide="line-chart"></i> Track Patient Scans Over Time</h2>
+                    <p>Select a patient file to compare MRI scans across multiple hospital visits and see changes in tumor size over time.</p>
+                </div>
+
+                <div class="progression-controls">
+                    <div class="patient-select-group">
+                        <label class="section-label"><i data-lucide="user"></i> Select Patient Case:</label>
+                        <div class="patient-select-wrapper">
+                            <select id="patientSelect" class="cyber-select">
+                                <option value="">-- Loading patient cases... --</option>
+                            </select>
+                            <i data-lucide="chevron-down" class="select-arrow"></i>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-cyber-primary" id="loadProgressionBtn" disabled>
+                        <i data-lucide="activity"></i> Compare Patient Scans
+                    </button>
+                </div>
+
+                <div class="progression-dashboard" id="progressionDashboard" style="display: none;">
+                    <div class="prog-summary-row" id="progSummaryRow"></div>
+
+                    <div class="prog-main-grid">
+                        <div class="prog-chart-card">
+                            <div class="card-header"><i data-lucide="line-chart"></i><h3>Tumor Size Over Time (in cm³)</h3></div>
+                            <div class="chart-canvas-wrapper"><canvas id="progressionChartCanvas"></canvas></div>
+                        </div>
+                        <div class="prog-timepoints-card">
+                            <div class="card-header"><i data-lucide="calendar"></i><h3>Scan Visit Dates</h3></div>
+                            <div class="timepoints-list" id="timepointsList"></div>
+                        </div>
+                    </div>
+
+                    <div class="prog-visual-card">
+                        <div class="card-header">
+                            <i data-lucide="eye"></i>
+                            <h3>Visual Scan Comparison (First Visit vs. Follow-up Visit)</h3>
+                        </div>
+                        <div class="prog-slices-grid" id="progSlicesGrid"></div>
+                    </div>
+                </div>
+
+                <div class="prog-empty-state" id="progEmptyState">
+                    <div class="empty-icon-wrap" style="margin: 0 auto 1rem;"><i data-lucide="layers"></i></div>
+                    <h3>Select a Patient to Compare Scans</h3>
+                    <p>20 sample patient files with MRI scans from different dates are available. Select a patient to view the scan progression chart.</p>
+                </div>
+            </div>
+
+            <!-- TAB 4: TEST RESULTS -->
+            <div class="cockpit-pane" id="benchmarksTab">
+                <div class="section-header">
+                    <h2 class="section-heading">Model Performance &amp; Accuracy</h2>
+                    <p>Test results evaluating how accurately each computer model categorized test brain MRI scans.</p>
+                </div>
+
+                <div class="benchmark-cards-grid">
+                    <div class="benchmark-card-cyber best-model">
+                        <div class="top-badge-cyber"><i data-lucide="award"></i> HIGHEST ACCURACY MODEL</div>
+                        <h3>Custom CNN Model</h3>
+                        <div class="big-metric-cyber">95.82%</div>
+                        <span class="metric-lbl">Overall Classification Accuracy</span>
+                        <div class="metric-progress-group">
+                            <div class="m-progress-item"><div class="m-info"><span>F1-Score</span><strong>95.74%</strong></div><div class="m-track"><div class="m-fill fill-cyan" style="width: 95.74%;"></div></div></div>
+                            <div class="m-progress-item"><div class="m-info"><span>Precision</span><strong>96.10%</strong></div><div class="m-track"><div class="m-fill fill-magenta" style="width: 96.10%;"></div></div></div>
+                            <div class="m-progress-item"><div class="m-info"><span>Recall</span><strong>95.82%</strong></div><div class="m-track"><div class="m-fill fill-emerald" style="width: 95.82%;"></div></div></div>
+                        </div>
+                    </div>
+
+                    <div class="benchmark-card-cyber">
+                        <h3>ResNet-18 Model</h3>
+                        <div class="big-metric-cyber">93.94%</div>
+                        <span class="metric-lbl">Overall Classification Accuracy</span>
+                        <div class="metric-progress-group">
+                            <div class="m-progress-item"><div class="m-info"><span>F1-Score</span><strong>93.82%</strong></div><div class="m-track"><div class="m-fill fill-cyan" style="width: 93.82%;"></div></div></div>
+                            <div class="m-progress-item"><div class="m-info"><span>Precision</span><strong>94.36%</strong></div><div class="m-track"><div class="m-fill fill-magenta" style="width: 94.36%;"></div></div></div>
+                            <div class="m-progress-item"><div class="m-info"><span>Recall</span><strong>93.94%</strong></div><div class="m-track"><div class="m-fill fill-emerald" style="width: 93.94%;"></div></div></div>
+                        </div>
+                    </div>
+
+                    <div class="benchmark-card-cyber">
+                        <h3>VGG-16 Model</h3>
+                        <div class="big-metric-cyber">92.25%</div>
+                        <span class="metric-lbl">Overall Classification Accuracy</span>
+                        <div class="metric-progress-group">
+                            <div class="m-progress-item"><div class="m-info"><span>F1-Score</span><strong>92.11%</strong></div><div class="m-track"><div class="m-fill fill-cyan" style="width: 92.11%;"></div></div></div>
+                            <div class="m-progress-item"><div class="m-info"><span>Precision</span><strong>92.80%</strong></div><div class="m-track"><div class="m-fill fill-magenta" style="width: 92.80%;"></div></div></div>
+                            <div class="m-progress-item"><div class="m-info"><span>Recall</span><strong>92.25%</strong></div><div class="m-track"><div class="m-fill fill-emerald" style="width: 92.25%;"></div></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: PROJECT GUIDE -->
+            <div class="cockpit-pane" id="assistantTab">
+                <div class="workspace-header-banner">
+                    <h2><i data-lucide="book-open"></i> Project Explanation &amp; Summary Guide</h2>
+                    <p>Click below to generate simple, plain-language text reports summarizing scan results or patient progress.</p>
+                </div>
+
+                <div class="assistant-hub-container">
+                    <div class="assistant-actions-bar">
+                        <button type="button" class="btn btn-cyber-primary" id="generateDiagnosticReportBtn">
+                            <i data-lucide="file-text"></i> Generate Single-Scan Summary Report
+                        </button>
+                        <button type="button" class="btn btn-cyber-outline" id="generateProgressionReportBtn">
+                            <i data-lucide="file-spread"></i> Generate Patient Progression Summary
+                        </button>
+                    </div>
+
+                    <div class="progression-output" id="assistantOutputBox" style="min-height: 420px; font-size: 0.92rem;">
+                        <p class="placeholder-text"><i data-lucide="info"></i> Run an analysis in 'Analyze Scan' or 'Compare Scans', then click a button above to generate a summary report.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <p>© 2026 KLERT Brain Scan Analysis Project • Student Computer Vision Presentation</p>
+        </div>
+    </footer>
+
+    <!-- Fullscreen Modal -->
+    <div class="modal-backdrop" id="imageModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Scan Inspection</h3>
+                <button type="button" class="btn-icon" id="closeModalBtn"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <img id="modalImg" src="" alt="Scan View">
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js?v=6.0"></script>
+</body>
+</html>
