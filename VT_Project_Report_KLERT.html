@@ -1924,24 +1924,23 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
       </ul>
     </div>
 
+    <div class="section-title">9.3 Limitations of Current Version</div>
+    <ul>
+      <li>3D tumor-volume calculation depends on compatible binary MaskTumor segmentations.</li>
+      <li>LLM-generated reporting requires network access to the Gemini API.</li>
+    </ul>
+
+    <div class="section-title">9.4 Future Enhancements</div>
+    <ul>
+      <li>Introduce 3D U-Net models for automated volumetric tumor segmentation.</li>
+      <li>Connect with hospital PACS through standard DICOM C-STORE protocols.</li>
+    </ul>
+
     <div class="footer-page-num">20</div>
   </div>
 
   <!-- CHAPTER 9: CONCLUSION AND FUTURE SCOPE (Page 22) -->
   <div class="page chapter-page chapter9-final">
-    <div class="section-title">9.3 Limitations of Current Version</div>
-    <ul>
-      <li>3D tumor volume calculation relies on binary MaskTumor segmentations.</li>
-      <li>LLM clinical reporting requires active network connectivity to the Gemini API.</li>
-    </ul>
-
-    <div class="section-title">9.4 Future Enhancements</div>
-    <ul>
-      <li>Integration of 3D U-Net neural architectures for automated real-time 3D tumor segmentation.</li>
-      <li>Integration with hospital PACS (Picture Archiving and Communication Systems) via standard DICOM C-STORE
-        protocols.</li>
-    </ul>
-
     <div class="section-title">9.5 Clinical Translation and Responsible Deployment</div>
     <p>Before clinical adoption, KLERT should be evaluated prospectively on diverse data from multiple institutions.
         The deployment process must include calibration studies, bias analysis across patient groups, data-protection
