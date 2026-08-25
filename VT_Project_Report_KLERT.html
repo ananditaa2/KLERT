@@ -184,6 +184,23 @@
       vertical-align: middle;
     }
 
+    .chapter-page {
+      font-size: 11.25pt;
+    }
+
+    .chapter-page p {
+      line-height: 1.54;
+    }
+
+    .chapter-page .section-title {
+      font-size: 12.5pt;
+      margin-top: 16px;
+    }
+
+    .chapter-page table {
+      font-size: 10pt;
+    }
+
     .cover-details .meta-label {
       font-size: 11pt;
     }
@@ -733,7 +750,9 @@
         <tr><td>Figure 6.2</td><td>Grad-CAM and DICOM progression processing flow</td><td style="text-align: right;">19</td></tr>
         <tr><td>Figure 8.1</td><td>Interactive preset test MRI dataset library interface</td><td style="text-align: right;">21</td></tr>
         <tr><td>Figure 8.2</td><td>Multi-model brain MRI classification and confidence-score output</td><td style="text-align: right;">21</td></tr>
-        <tr><td>Figure 8.3</td><td>3D DICOM longitudinal tumor progression and volume curve</td><td style="text-align: right;">21</td></tr>      </tbody>
+        <tr><td>Figure 8.3</td><td>3D DICOM longitudinal tumor progression and volume curve</td><td style="text-align: right;">21</td></tr>
+        <tr><td>Figure 9.1</td><td>Future development roadmap for KLERT</td><td style="text-align: right;">23</td></tr>
+      </tbody>
     </table>
 
     <div class="footer-page-num">vi</div>
@@ -774,7 +793,7 @@
   <!-- ==========================================
        CHAPTER 1: INTRODUCTION (Page 1 STARTS HERE!)
        ========================================== -->
-  <div class="page">
+  <div class="page chapter-page">
     <div class="chapter-header">
       <div class="chapter-title">CHAPTER 1: INTRODUCTION</div>
     </div>
@@ -831,7 +850,7 @@
   <!-- ==========================================
        CHAPTER 1 CONTINUATION: INTRODUCTION & METHODOLOGY (Pages 2-16)
        ========================================== -->
-  <div class="page">
+  <div class="page chapter-page">
     <div class="section-title">1.4 Objectives of the KLERT Project</div>
     <ul>
       <li><strong>Multi-Model Brain MRI Classification:</strong> Build and evaluate Custom BrainTumorCNN, ResNet-18, and
@@ -851,7 +870,7 @@
     <div class="footer-page-num">2</div>
   </div>
 
-  <div class="page">
+  <div class="page chapter-page">
     <div class="section-title">1.6 Users, Stakeholders, and Use Scenarios</div>
     <p>KLERT was planned around the needs of several stakeholders. Students and researchers need an understandable environment for experimenting with deep-learning models. Clinicians and radiology trainees need a concise visual summary that keeps the source scan visible. Technical administrators need predictable APIs, input validation, and a traceable execution path. A patient-facing user, if included in a future deployment, would require plain-language explanations and clear warnings about the limits of automated analysis.</p>
     <table><thead><tr><th>Stakeholder</th><th>Primary Need</th><th>KLERT Response</th></tr></thead><tbody>
@@ -864,7 +883,7 @@
     <div class="footer-page-num">3</div>
   </div>
 
-  <div class="page">
+  <div class="page chapter-page">
     <div class="section-title">1.7 Scope, Boundaries, and Assumptions</div>
     <p>The implemented prototype accepts supported image inputs and demonstrates classification, explainability, and longitudinal comparison features. Its scope includes a web interface, a REST-style backend, trained image classifiers, Grad-CAM visualization, and structured result presentation. The project is intentionally limited to research and academic demonstration data; it is not integrated with a hospital PACS, electronic health record, or emergency workflow.</p>
     <p>Several assumptions keep the system technically manageable. Input scans are assumed to be de-identified and to represent brain MRI studies of usable quality. Labels used for evaluation are assumed to have been prepared by the source dataset. The selected models operate on two-dimensional representations, while the DICOM progression module demonstrates how volume and date information can be tracked when a compatible image series and segmentation are available.</p>
@@ -874,7 +893,7 @@
     <div class="footer-page-num">4</div>
   </div>
 
-  <div class="page">
+  <div class="page chapter-page">
     <div class="section-title">1.9 Functional and Quality Objectives</div>
     <p>The project objectives can be evaluated as observable system behaviours. First, the platform must accept an image and identify the most probable class using a selected classifier. Second, it must expose the probability distribution so that users can see alternatives rather than only a single label. Third, it must generate an explanation image that connects the prediction to regions in the scan. Fourth, it must enable a comparison workflow for longitudinal records.</p>
     <p>Quality objectives are equally important. The interface should be understandable for a first-time user, responsive on common screen sizes, and visually consistent. Results must remain linked to the input image and model used. The backend must reject invalid files cleanly, avoid path traversal, and return actionable error messages. Model evaluation should report more than accuracy, including precision, recall, and F1-score, because class-wise performance matters in a multi-class task.</p>
@@ -889,7 +908,7 @@
     <div class="footer-page-num">5</div>
   </div>
 
-  <div class="page">
+  <div class="page chapter-page">
     <div class="section-title">1.11 Project Contribution and Novelty</div>
     <p>The primary contribution of KLERT is the integration of several complementary capabilities into a coherent, educational workflow. Rather than treating classification as the final screen, the platform connects model comparison, visual explanation, plain-language context, and longitudinal information. This makes the result easier to inspect and demonstrates the broader engineering work required around a deep-learning model.</p>
     <p>KLERT also emphasizes usability. The dashboard presents common tasks—analysis, comparison, test results, and project guidance—as distinct entry points. This reduces the cognitive load of navigating a technical application. The design deliberately uses labels, status indicators, and explanatory text so that a user understands both what the system can do and what action is expected next.</p>
@@ -901,7 +920,7 @@
     <div class="footer-page-num">6</div>
   </div>
 
-  <div class="page">
+  <div class="page chapter-page">
     <div class="section-title">1.12 Organization of the Report</div>
     <p>This report progresses from problem definition to implementation and evaluation. Chapter 1 introduces the clinical context, users, constraints, and objectives. The added methodology section documents the repeatable approach used to prepare data, train models, generate explanations, and validate the integrated system. The following chapters then describe the literature basis, requirements, architecture, data pipeline, interface design, implementation, artificial-intelligence components, testing, results, security, and conclusions.</p>
     <p>Organizing the report in this sequence makes it possible to trace each feature back to a need and forward to a testable outcome. For example, the need for transparent predictions motivates Grad-CAM; Grad-CAM in turn creates requirements for model hooks, image normalization, and a side-by-side user interface. Similarly, the need to compare patient studies motivates a structured record of scan dates and volume estimates.</p>
@@ -911,7 +930,7 @@
   </div>
 
   <!-- CHAPTER 2: LITERATURE SURVEY (Page 8) -->
-  <div class="page">
+  <div class="page chapter-page">
     <div class="chapter-header">
       <div class="chapter-title">CHAPTER 2: LITERATURE SURVEY</div>
     </div>
@@ -1005,7 +1024,7 @@
   </div>
 
   <!-- CHAPTER 3: PROBLEM STATEMENT AND OBJECTIVES (Page 9) -->
-  <div class="page">
+  <div class="page chapter-page">
     <div class="chapter-header">
       <div class="chapter-title">CHAPTER 3: PROBLEM STATEMENT AND OBJECTIVES</div>
     </div>
@@ -1082,7 +1101,7 @@
     <div class="footer-page-num">9</div>
   </div>
 
-  <div class="page">
+  <div class="page chapter-page">
     <div class="chapter-header"><div class="chapter-title">CHAPTER 4: RESEARCH METHODOLOGY</div></div>
     <div class="section-title">4.1 Methodological Framework</div>
     <p>KLERT follows an iterative engineering methodology that combines machine-learning experimentation with web-application development. Each cycle begins with a user requirement or clinical observation, converts it into a measurable feature, and ends with validation. The complete workflow covers problem framing, data preparation, model development, evaluation, explainability, application integration, and verification. Outputs from one stage become controlled inputs to the next, which prevents mismatches between experimentation and live inference.</p>
@@ -1100,7 +1119,7 @@
     <div class="footer-page-num">10</div>
   </div>
 
-  <div class="page">
+  <div class="page chapter-page">
     <div class="section-title">4.3 Image Preprocessing and Input Standardization</div>
     <p>KLERT converts supported files into consistent RGB tensors, resizes them to the expected model resolution, scales pixel values, and applies the normalization used during training. Controlled augmentation may be applied only to training data through small rotations, shifts, zoom, or intensity variation; validation and test images receive deterministic preprocessing only. A shared transformation function is used by training, evaluation, the API, and Grad-CAM generation so that colour channels, scaling, and orientation remain consistent.</p>
     <div class="section-title">4.4 Model Development and Training Strategy</div>
@@ -1111,7 +1130,7 @@
     <div class="footer-page-num">11</div>
   </div>
 
-  <div class="page">
+  <div class="page chapter-page">
     <div class="section-title">4.6 Explainability Using Grad-CAM</div>
     <p>Grad-CAM provides a visual explanation for a selected class prediction. The gradient of the class score is calculated with respect to feature maps in a late convolutional layer. These gradients are pooled into channel weights, combined with the feature maps, rectified, and resized into a heatmap. The result is displayed with the source scan so that a reviewer can judge whether the model attends to a meaningful anatomical region.</p>
     <p>The heatmap is a review aid, not a proof of tumour presence and not a pixel-perfect segmentation. It may reveal reliance on a plausible lesion region, an irrelevant boundary, or an annotation artefact. This limitation is communicated alongside the visualization.</p>
@@ -1125,7 +1144,7 @@
     <div class="footer-page-num">12</div>
   </div>
 
-  <div class="page">
+  <div class="page chapter-page">
     <div class="section-title">4.8 Application Integration and API Workflow</div>
     <p>During integration, the browser sends a supported image or DICOM request to the model-serving backend. The server validates type and size, applies the shared preprocessing routine, selects the requested model, performs inference, and returns the predicted class, confidence distribution, and visualization data. The frontend renders the result without exposing internal model details.</p>
     <p>Separation of concerns keeps the system maintainable: the UI manages interaction and accessibility; the API manages validation and structured responses; model modules manage weights and prediction logic; and utility modules handle transformations, Grad-CAM, DICOM processing, and report formatting. This structure also permits independent component testing.</p>
@@ -1136,7 +1155,7 @@
     <div class="footer-page-num">13</div>
   </div>
 
-  <div class="page">
+  <div class="page chapter-page">
     <div class="section-title">4.11 Method Summary and Quality Controls</div>
     <p>The methodology is designed to keep every major project claim traceable to an input, a processing step, and an evaluation result. Dataset governance limits leakage; standard preprocessing keeps training and deployment aligned; comparative model training provides a meaningful baseline; Grad-CAM makes predictions inspectable; DICOM metadata supports physical volume calculations; and API validation protects the integrated workflow.</p>
     <p>Quality control is applied at both the model and application levels. Model quality is examined through class-aware metrics, confusion patterns, independent testing, and visual inspection of explanations. Application quality is examined through valid and invalid requests, route behaviour, report generation, concurrent use, and responsive layout checks. Any future clinical deployment would additionally require prospective multi-institution validation, privacy review, bias assessment, regulatory oversight, and qualified human supervision.</p>
@@ -1153,7 +1172,7 @@
   </div>
 
   <!-- CHAPTER 5: SYSTEM ANALYSIS (Page 19) -->
-  <div class="page">
+  <div class="page chapter-page">
     <div class="chapter-header">
       <div class="chapter-title">CHAPTER 5: SYSTEM ANALYSIS</div>
     </div>
@@ -1241,7 +1260,7 @@
   </div>
 
   <!-- CHAPTER 5: SYSTEM ANALYSIS (Page 20) -->
-  <div class="page">
+  <div class="page chapter-page">
 
     <div class="section-title">5.3 Dataset Pipeline & DICOM Structure</div>
     <p>KLERT operates on two primary data sources: the Kaggle Brain Tumor MRI Dataset (7,023 images across 4 classes)
@@ -1298,7 +1317,7 @@ transform = transforms.Compose([
   </div>
 
   <!-- CHAPTER 5: SYSTEM ANALYSIS (Page 21) -->
-  <div class="page">
+  <div class="page chapter-page">
 
     <div class="section-title">5.5 HCI Principles in Medical Diagnostics</div>
     <p>Medical AI interfaces must minimize cognitive load and eliminate ambiguity. KLERT's frontend follows strict
@@ -1342,7 +1361,7 @@ transform = transforms.Compose([
   </div>
 
   <!-- CHAPTER 6: IMPLEMENTATION (Page 22) -->
-  <div class="page">
+  <div class="page chapter-page">
     <div class="chapter-header">
       <div class="chapter-title">CHAPTER 6: IMPLEMENTATION</div>
     </div>
@@ -1409,7 +1428,7 @@ transform = transforms.Compose([
   </div>
 
   <!-- CHAPTER 6: IMPLEMENTATION (Page 23) -->
-  <div class="page">
+  <div class="page chapter-page">
 
     <div class="section-title">6.3 AI in Digital Healthcare & CSE-AIML Alignment</div>
     <p>As a project engineered within the Department of CSE (Artificial Intelligence & Machine Learning), KLERT
@@ -1449,7 +1468,7 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
   </div>
 
   <!-- CHAPTER 7: TESTING AND VALIDATION (Page 24) -->
-  <div class="page">
+  <div class="page chapter-page">
     <div class="chapter-header">
       <div class="chapter-title">CHAPTER 7: TESTING AND VALIDATION</div>
     </div>
@@ -1614,7 +1633,7 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
   </div>
 
   <!-- CHAPTER 8: RESULTS AND DISCUSSION (Page 25) -->
-  <div class="page">
+  <div class="page chapter-page">
     <div class="chapter-header">
       <div class="chapter-title">CHAPTER 8: RESULTS AND DISCUSSION</div>
     </div>
@@ -1784,7 +1803,7 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
   </div>
 
   <!-- CHAPTER 9: CONCLUSION AND FUTURE SCOPE (Page 26) -->
-  <div class="page">
+  <div class="page chapter-page">
     <div class="chapter-header">
       <div class="chapter-title">CHAPTER 9: CONCLUSION AND FUTURE SCOPE</div>
     </div>
@@ -1831,7 +1850,7 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
   </div>
 
   <!-- CHAPTER 9: CONCLUSION AND FUTURE SCOPE (Page 27) -->
-  <div class="page">
+  <div class="page chapter-page">
     <div class="section-title">9.2 Project Summary & Key Achievements</div>
     <p>The <strong>KLERT</strong> project successfully designed, engineered, tested, and deployed a comprehensive
       explainable medical AI platform for brain MRI classification and 3D DICOM progression tracking. Key achievements
@@ -1857,6 +1876,30 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
       <li>Integration with hospital PACS (Picture Archiving and Communication Systems) via standard DICOM C-STORE
         protocols.</li>
     </ul>
+
+    <div class="diagram-box">
+      <svg width="100%" height="120" viewBox="0 0 680 120" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="30" width="145" height="55" rx="7" fill="#e2e8f0" stroke="#1a2e5a" />
+        <text x="82" y="53" font-family="Inter" font-size="10" font-weight="bold" fill="#1a2e5a" text-anchor="middle">CURRENT</text>
+        <text x="82" y="69" font-family="Inter" font-size="9" fill="#1e293b" text-anchor="middle">KLERT prototype</text>
+        <line x1="155" y1="57" x2="185" y2="57" stroke="#800000" stroke-width="2" />
+        <polygon points="185,57 177,52 177,62" fill="#800000" />
+        <rect x="190" y="30" width="145" height="55" rx="7" fill="#e2e8f0" stroke="#1a2e5a" />
+        <text x="262" y="53" font-family="Inter" font-size="10" font-weight="bold" fill="#1a2e5a" text-anchor="middle">NEXT</text>
+        <text x="262" y="69" font-family="Inter" font-size="9" fill="#1e293b" text-anchor="middle">3D segmentation</text>
+        <line x1="335" y1="57" x2="365" y2="57" stroke="#800000" stroke-width="2" />
+        <polygon points="365,57 357,52 357,62" fill="#800000" />
+        <rect x="370" y="30" width="145" height="55" rx="7" fill="#e2e8f0" stroke="#1a2e5a" />
+        <text x="442" y="53" font-family="Inter" font-size="10" font-weight="bold" fill="#1a2e5a" text-anchor="middle">INTEGRATE</text>
+        <text x="442" y="69" font-family="Inter" font-size="9" fill="#1e293b" text-anchor="middle">PACS interoperability</text>
+        <line x1="515" y1="57" x2="545" y2="57" stroke="#800000" stroke-width="2" />
+        <polygon points="545,57 537,52 537,62" fill="#800000" />
+        <rect x="550" y="30" width="120" height="55" rx="7" fill="#e2e8f0" stroke="#1a2e5a" />
+        <text x="610" y="53" font-family="Inter" font-size="10" font-weight="bold" fill="#1a2e5a" text-anchor="middle">VALIDATE</text>
+        <text x="610" y="69" font-family="Inter" font-size="9" fill="#1e293b" text-anchor="middle">Clinical review</text>
+      </svg>
+      <div class="diagram-title">Figure 9.1: Future development roadmap for KLERT.</div>
+    </div>
 
     <div class="footer-page-num">23</div>
   </div>
