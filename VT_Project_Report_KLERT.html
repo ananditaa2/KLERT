@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VT Project Report — KLERT: Explainable Multi-Model AI & Longitudinal Tumor Progression System</title>
+  <title>KLERT: Explainable Medical AI & DICOM Progression System</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Times+New+Roman&display=swap');
 
@@ -31,14 +31,15 @@
       background-color: #f1f5f9;
       margin: 0;
       padding: 0;
-      font-size: 11.5pt;
-      line-height: 1.6;
+      font-size: 11pt;
+      line-height: 1.48;
     }
 
     .page {
       width: 210mm;
+      height: 297mm;
       min-height: 297mm;
-      padding: 22mm 20mm 22mm 25mm;
+      padding: 14mm 16mm;
       margin: 15px auto;
       background: #ffffff;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -48,6 +49,11 @@
     }
 
     @media print {
+      @page {
+        size: A4;
+        margin: 0;
+      }
+
       body {
         background: none;
       }
@@ -57,8 +63,9 @@
         box-shadow: none;
         width: 210mm;
         height: 297mm;
+        min-height: 297mm;
         page-break-after: always;
-        padding: 20mm 18mm 20mm 22mm;
+        padding: 14mm 16mm;
       }
 
       .no-print {
@@ -116,6 +123,43 @@
       object-fit: contain;
       display: block;
       margin: 0 auto 4px;
+    }
+
+    .csvtu-logo {
+      border: none;
+      outline: none;
+      box-shadow: none;
+    }
+
+    .csvtu-logo-frame {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    .csvtu-logo-frame .csvtu-logo {
+      width: 124px !important;
+      height: 124px !important;
+      max-width: none;
+      transform: translate(-2px, -2px);
+    }
+
+    .cover-details .meta-label {
+      font-size: 11pt;
+    }
+
+    .cover-details .meta-value-main {
+      font-size: 16pt;
+    }
+
+    .cover-details .meta-value-sub,
+    .cover-details > div {
+      font-size: 12pt;
+    }
+
+    .cover-details div[style*="font-size: 10pt"] {
+      font-size: 12pt !important;
     }
 
     .institution-logo-inline {
@@ -181,14 +225,14 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 15px 0;
-      font-size: 10pt;
+      margin: 11px 0;
+      font-size: 9.8pt;
     }
 
     th,
     td {
       border: 1px solid var(--border-color);
-      padding: 7px 10px;
+      padding: 5px 8px;
       text-align: left;
       vertical-align: top;
     }
@@ -198,7 +242,7 @@
       color: var(--primary-navy);
       font-family: 'Cinzel', serif;
       font-weight: 700;
-      font-size: 9.5pt;
+      font-size: 9.2pt;
       text-transform: uppercase;
     }
 
@@ -208,8 +252,8 @@
 
     .table-title {
       font-weight: bold;
-      margin-bottom: 6px;
-      font-size: 10pt;
+      margin-bottom: 4px;
+      font-size: 9.8pt;
       color: var(--primary-navy);
       text-align: center;
     }
@@ -224,20 +268,20 @@
       background-color: var(--code-bg);
       border: 1px solid var(--border-color);
       border-left: 4px solid var(--primary-navy);
-      padding: 10px 12px;
+      padding: 8px 10px;
       overflow-x: auto;
       white-space: pre-wrap;
       word-break: break-all;
       border-radius: 4px;
-      margin: 12px 0;
+      margin: 10px 0;
     }
 
     .diagram-box {
       border: 1px solid var(--border-color);
       border-radius: 6px;
       background: #ffffff;
-      padding: 10px;
-      margin: 15px 0;
+      padding: 8px;
+      margin: 11px 0;
       text-align: center;
     }
 
@@ -253,18 +297,18 @@
       font-weight: bold;
       font-size: 9.5pt;
       color: var(--primary-navy);
-      margin-top: 8px;
+      margin-top: 6px;
     }
 
     .chapter-header {
       border-bottom: 2px solid var(--primary-navy);
-      padding-bottom: 6px;
-      margin-bottom: 18px;
-      margin-top: 10px;
+      padding-bottom: 5px;
+      margin-bottom: 13px;
+      margin-top: 6px;
     }
 
     .chapter-title {
-      font-size: 16pt;
+      font-size: 15pt;
       font-weight: 700;
       color: var(--primary-navy);
       letter-spacing: 0.5px;
@@ -272,31 +316,41 @@
     }
 
     .section-title {
-      font-size: 13pt;
+      font-size: 12pt;
       font-weight: 700;
       color: var(--accent-red);
-      margin-top: 18px;
-      margin-bottom: 8px;
+      margin-top: 14px;
+      margin-bottom: 6px;
       border-left: 3px solid var(--accent-red);
       padding-left: 8px;
+      break-after: avoid;
     }
 
     p {
-      margin-bottom: 10px;
+      margin-bottom: 7px;
       text-align: justify;
       text-justify: inter-word;
+      orphans: 3;
+      widows: 3;
     }
 
     ul,
     ol {
       margin-top: 4px;
-      margin-bottom: 10px;
+      margin-bottom: 7px;
       padding-left: 22px;
+      break-inside: avoid;
     }
 
     li {
-      margin-bottom: 4px;
+      margin-bottom: 3px;
       text-align: justify;
+    }
+
+    table,
+    pre,
+    .diagram-box {
+      break-inside: avoid;
     }
 
     .footer-page-num {
@@ -386,8 +440,10 @@
 
         <div class="badge-container">
           <!-- Official CSVTU logo supplied for this report. -->
-          <img src="assets/csvtu-logo.png" alt="CSVTU Bhilai logo"
-            style="width: 120px; height: 120px; object-fit: contain; margin: 0 auto; display: block;">
+          <div class="csvtu-logo-frame">
+            <img src="assets/csvtu-logo.png" alt="CSVTU Bhilai logo"
+              class="csvtu-logo" style="margin: 0; display: block; border: none; outline: none; box-shadow: none;">
+          </div>
         </div>
       </div>
 
@@ -398,7 +454,7 @@
           (Artificial Intelligence & Machine Learning)</div>
       </div>
 
-      <div>
+      <div class="cover-details">
         <div style="margin-bottom: 12px;">
           <div class="meta-label">— BY —</div>
           <div class="meta-value-main">Anandita Indurkhya</div>
@@ -418,7 +474,7 @@
         <img src="assets/ssipmt-raipur-logo.png" alt="SSIPMT Raipur logo" class="institution-logo-cover">
         <div style="font-size: 11pt; font-weight: bold; color: var(--primary-navy);">Shri Shankaracharya Institute of
           Professional Management & Technology</div>
-        <div style="font-size: 9.5pt; color: var(--text-muted);">Raipur, Chhattisgarh (NAAC A+ Accredited)</div>
+        <div style="font-size: 9.5pt; color: var(--text-muted);">Raipur, Chhattisgarh</div>
       </div>
     </div>
     <!-- Preliminary Cover Page: No Page Number displayed -->
@@ -433,15 +489,14 @@
         <img src="assets/ssipmt-raipur-logo.png" alt="SSIPMT Raipur logo" class="institution-logo">
         <div class="header-box-title">Shri Shankaracharya Institute of Professional Management & Technology, Raipur</div>
       </div>
-      <div style="font-size: 8pt; font-weight: bold; color: var(--accent-red);">NAAC A+ ACCREDITED</div>
     </div>
 
     <div style="text-align: center; margin-top: 25px; margin-bottom: 25px;">
       <h2 style="text-decoration: underline; font-size: 16pt;">DECLARATION BY THE CANDIDATE</h2>
     </div>
 
-    <p>I, <strong>Anandita Indurkhya</strong>, hereby declare that the project entitled <strong>"KLERT: An Explainable
-        Multi-Model AI and 3D DICOM Longitudinal Tumor Progression Platform for Brain MRI Analysis"</strong> is an
+    <p>I, <strong>Anandita Indurkhya</strong>, hereby declare that the project entitled
+      <strong>"KLERT: Explainable Medical AI & DICOM Progression System"</strong> is an
       original work carried out by me under the guidance of <strong>Mr. Prabhakar Sharma</strong> in partial fulfillment
       of the requirements for the award of the degree of <strong>Bachelor of Technology (B.Tech.)</strong> in
       <strong>Computer Science and Engineering (Artificial Intelligence & Machine Learning)</strong>.
@@ -458,7 +513,7 @@
         <div style="font-weight: bold;">Anandita Indurkhya</div>
         <div>Roll No.: 303310924006</div>
         <div>Semester: 5th (AIML)</div>
-        <div>SSIPMT Raipur (C.G.)</div>
+        <div>Raipur, Chhattisgarh</div>
       </div>
       <div>
         <div style="font-weight: bold;">Under the Guidance of</div>
@@ -473,68 +528,9 @@
   </div>
 
   <!-- ==========================================
-       PAGE 3: CERTIFICATE OF APPROVAL (Page iii)
+       PAGE 3: ACKNOWLEDGEMENT (Page iii)
        ========================================== -->
   <div class="page">
-    <div class="header-box">
-      <div class="institution-brand">
-        <img src="assets/ssipmt-raipur-logo.png" alt="SSIPMT Raipur logo" class="institution-logo">
-        <div class="header-box-title">Shri Shankaracharya Institute of Professional Management & Technology, Raipur</div>
-      </div>
-      <div style="font-size: 8pt; font-weight: bold; color: var(--accent-red);">AFFILIATED TO CSVTU BHILAI</div>
-    </div>
-
-    <div style="text-align: center; margin-top: 25px; margin-bottom: 25px;">
-      <h2 style="text-decoration: underline; font-size: 16pt;">CERTIFICATE OF APPROVAL</h2>
-    </div>
-
-    <p>This is to certify that the project report entitled <strong>"KLERT: An Explainable Multi-Model AI and 3D DICOM
-        Longitudinal Tumor Progression Platform for Brain MRI Analysis"</strong> is a bonafide work carried out by
-      <strong>Anandita Indurkhya (Roll No: 303310924006)</strong>, a student of <strong>5th Semester, B.Tech. in
-        Computer Science and Engineering (Artificial Intelligence & Machine Learning)</strong> at <strong>Shri
-        Shankaracharya Institute of Professional Management and Technology (SSIPMT), Raipur</strong>, affiliated to
-      <strong>Chhattisgarh Swami Vivekanand Technical University (CSVTU), Bhilai</strong>.
-    </p>
-
-    <p>This project report is submitted in partial fulfillment of the requirements for the award of the degree of
-      <strong>Bachelor of Technology in Computer Science and Engineering (Artificial Intelligence & Machine
-        Learning)</strong> during the academic session 2025–2026 under the supervision of <strong>Mr. Prabhakar
-        Sharma</strong>.
-    </p>
-
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 80px;">
-      <div>
-        <div class="signature-line">(Mr. Prabhakar Sharma)</div>
-        <div>Project Guide & Assistant Professor</div>
-        <div>Dept. of AIML, SSIPMT Raipur</div>
-      </div>
-      <div>
-        <div class="signature-line">(Head of Department)</div>
-        <div>Dept. of AIML</div>
-        <div>SSIPMT, Raipur</div>
-      </div>
-      <div style="margin-top: 40px;">
-        <div class="signature-line">(Principal / Director)</div>
-        <div>SSIPMT, Raipur</div>
-      </div>
-      <div style="margin-top: 40px;">
-        <div class="signature-line">(External Examiner)</div>
-        <div>CSVTU Examination Board</div>
-      </div>
-    </div>
-
-    <div class="footer-page-num">iii</div>
-  </div>
-
-  <!-- ==========================================
-       PAGE 4: ACKNOWLEDGEMENT (Page iv)
-       ========================================== -->
-  <div class="page">
-    <div class="header-box">
-      <div class="header-box-title">Department of Computer Science & Engineering (AIML)</div>
-      <div style="font-size: 8pt; font-weight: bold; color: var(--primary-navy);">SSIPMT RAIPUR</div>
-    </div>
-
     <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
       <h2 style="text-decoration: underline; font-size: 16pt;">ACKNOWLEDGEMENT</h2>
     </div>
@@ -544,7 +540,7 @@
       state-of-the-art artificial intelligence & GPU computational laboratories, and institutional support to execute
       this medical AI engineering project.</p>
 
-    <p>I would like to extend my sincere gratitude to our respected <strong>Principal / Director</strong> and the
+    <p>I would like to extend my sincere gratitude to our respected <strong>Principal</strong> and the
       <strong>Head of Department (AIML)</strong> for their visionary leadership, continuous encouragement, and
       infrastructure support.
     </p>
@@ -553,18 +549,18 @@
       Professor, Dept. of AIML, whose invaluable guidance, architectural critique, and constructive feedback steered
       this project from deep neural network model design to full-stack deployment.</p>
 
-    <p>I also extend my sincere thanks to all faculty members and laboratory staff of the Department of Computer Science
-      & Engineering (AIML) for imparting foundational knowledge in deep learning, computer vision, digital image
+    <p>I also extend my sincere thanks to all faculty members and laboratory staff for imparting foundational knowledge
+      in deep learning, computer vision, digital image
       processing, and software engineering.</p>
 
     <div style="float: right; margin-top: 60px; text-align: right;">
       <div style="font-weight: bold; font-size: 12pt; color: var(--primary-navy);">Anandita Indurkhya</div>
       <div>Roll No: 303310924006</div>
       <div>B.Tech. CSE (AIML), 5th Semester</div>
-      <div>SSIPMT Raipur (C.G.)</div>
+      <div>Raipur, Chhattisgarh</div>
     </div>
 
-    <div class="footer-page-num">iv</div>
+    <div class="footer-page-num">iii</div>
   </div>
 
   <!-- ==========================================
@@ -572,17 +568,7 @@
        ========================================== -->
   <div class="page">
     <div class="header-box">
-      <div class="header-box-title">KLERT: Explainable Medical AI & DICOM Progression System</div>
-      <div style="font-size: 8pt; font-weight: bold; color: var(--accent-red);">ABSTRACT</div>
-    </div>
-
-    <div
-      style="border: 1px solid var(--border-color); background-color: #fafbfc; padding: 12px 15px; border-left: 4px solid var(--primary-navy); margin-bottom: 20px; font-size: 9.5pt;">
-      <div><strong>Project Title:</strong> KLERT — An Explainable Multi-Model AI and 3D DICOM Longitudinal Tumor
-        Progression Platform for Brain MRI Analysis</div>
-      <div><strong>Author:</strong> Anandita Indurkhya (Roll No: 303310924006) | <strong>Supervisor:</strong> Mr.
-        Prabhakar Sharma</div>
-      <div><strong>Core Framework:</strong> PyTorch, FastAPI, Grad-CAM, PyDicom, OpenCV, Gemini LLM Clinical Agent</div>
+      <div class="header-box-title">ABSTRACT</div>
     </div>
 
     <p>In modern neuro-oncology, accurate classification of brain tumors from Magnetic Resonance Imaging (MRI) combined
@@ -617,7 +603,7 @@
         academic standards)</p>
     </div>
 
-    <div class="footer-page-num">v</div>
+    <div class="footer-page-num">iv</div>
   </div>
 
   <!-- ==========================================
@@ -644,112 +630,42 @@
         </tr>
         <tr>
           <td></td>
-          <td>Certificate of Approval</td>
+          <td>Acknowledgement</td>
           <td style="text-align: right;">iii</td>
         </tr>
         <tr>
           <td></td>
-          <td>Acknowledgement</td>
+          <td>Abstract</td>
           <td style="text-align: right;">iv</td>
         </tr>
         <tr>
           <td></td>
-          <td>Abstract</td>
-          <td style="text-align: right;">v</td>
-        </tr>
-        <tr>
-          <td></td>
           <td>List of Figures</td>
-          <td style="text-align: right;">vii</td>
+          <td style="text-align: right;">vi</td>
         </tr>
         <tr>
           <td></td>
           <td>List of Tables</td>
-          <td style="text-align: right;">viii</td>
+          <td style="text-align: right;">vii</td>
         </tr>
-        <tr>
-          <td><strong>1</strong></td>
-          <td><strong>INTRODUCTION & PROJECT OVERVIEW</strong></td>
-          <td style="text-align: right;"><strong>1</strong></td>
-        </tr>
-        <tr>
-          <td><strong>M</strong></td>
-          <td><strong>RESEARCH METHODOLOGY & PROJECT WORKFLOW</strong></td>
-          <td style="text-align: right;"><strong>8</strong></td>
-        </tr>
-        <tr>
-          <td><strong>2</strong></td>
-          <td><strong>LITERATURE SURVEY & COMPARATIVE STUDY</strong></td>
-          <td style="text-align: right;"><strong>17</strong></td>
-        </tr>
-        <tr>
-          <td><strong>3</strong></td>
-          <td><strong>REQUIREMENTS SPECIFICATION & FEASIBILITY ANALYSIS</strong></td>
-          <td style="text-align: right;"><strong>18</strong></td>
-        </tr>
-        <tr>
-          <td><strong>4</strong></td>
-          <td><strong>SYSTEM ARCHITECTURE & STRUCTURAL MODELING</strong></td>
-          <td style="text-align: right;"><strong>19</strong></td>
-        </tr>
-        <tr>
-          <td><strong>5</strong></td>
-          <td><strong>DATABASE DESIGN & DATA PIPELINE MODELING</strong></td>
-          <td style="text-align: right;"><strong>20</strong></td>
-        </tr>
-        <tr>
-          <td><strong>6</strong></td>
-          <td><strong>UI/UX ENGINEERING & DESIGN SYSTEM</strong></td>
-          <td style="text-align: right;"><strong>21</strong></td>
-        </tr>
-        <tr>
-          <td><strong>7</strong></td>
-          <td><strong>IMPLEMENTATION & CODE MODULE DETAILS</strong></td>
-          <td style="text-align: right;"><strong>22</strong></td>
-        </tr>
-        <tr>
-          <td><strong>8</strong></td>
-          <td><strong>ARTIFICIAL INTELLIGENCE & SMART CAPABILITIES</strong></td>
-          <td style="text-align: right;"><strong>23</strong></td>
-        </tr>
-        <tr>
-          <td><strong>9</strong></td>
-          <td><strong>SYSTEM TESTING & QUALITY ASSURANCE</strong></td>
-          <td style="text-align: right;"><strong>24</strong></td>
-        </tr>
-        <tr>
-          <td><strong>10</strong></td>
-          <td><strong>RESULTS, SYSTEM SNAPSHOTS & DISCUSSION</strong></td>
-          <td style="text-align: right;"><strong>25</strong></td>
-        </tr>
-        <tr>
-          <td><strong>11</strong></td>
-          <td><strong>SECURITY, DEPLOYMENT & DEVOPS</strong></td>
-          <td style="text-align: right;"><strong>26</strong></td>
-        </tr>
-        <tr>
-          <td><strong>12</strong></td>
-          <td><strong>CONCLUSION & FUTURE ROADMAP</strong></td>
-          <td style="text-align: right;"><strong>27</strong></td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>REFERENCES & BIBLIOGRAPHY</td>
-          <td style="text-align: right;">28</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>APPENDIX: KEY CODE MODULES & MODEL ARCHITECTURES</td>
-          <td style="text-align: right;">28</td>
-        </tr>
+        <tr><td><strong>1</strong></td><td><strong>INTRODUCTION</strong></td><td style="text-align: right;"><strong>1</strong></td></tr>
+        <tr><td><strong>2</strong></td><td><strong>LITERATURE SURVEY</strong></td><td style="text-align: right;"><strong>8</strong></td></tr>
+        <tr><td><strong>3</strong></td><td><strong>PROBLEM STATEMENT AND OBJECTIVES</strong></td><td style="text-align: right;"><strong>9</strong></td></tr>
+        <tr><td><strong>4</strong></td><td><strong>RESEARCH METHODOLOGY</strong></td><td style="text-align: right;"><strong>10</strong></td></tr>
+        <tr><td><strong>5</strong></td><td><strong>SYSTEM ANALYSIS</strong></td><td style="text-align: right;"><strong>15</strong></td></tr>
+        <tr><td><strong>6</strong></td><td><strong>IMPLEMENTATION</strong></td><td style="text-align: right;"><strong>18</strong></td></tr>
+        <tr><td><strong>7</strong></td><td><strong>TESTING AND VALIDATION</strong></td><td style="text-align: right;"><strong>20</strong></td></tr>
+        <tr><td><strong>8</strong></td><td><strong>RESULTS AND DISCUSSION</strong></td><td style="text-align: right;"><strong>21</strong></td></tr>
+        <tr><td><strong>9</strong></td><td><strong>CONCLUSION AND FUTURE SCOPE</strong></td><td style="text-align: right;"><strong>23</strong></td></tr>
+        <tr><td></td><td><strong>REFERENCES</strong></td><td style="text-align: right;"><strong>24</strong></td></tr>
       </tbody>
     </table>
 
-    <div class="footer-page-num">vi</div>
+    <div class="footer-page-num">v</div>
   </div>
 
   <!-- ==========================================
-       PAGE 7: LIST OF FIGURES & TABLES (Page vii)
+       PAGE 7: LIST OF FIGURES (Page vii)
        ========================================== -->
   <div class="page">
     <div style="text-align: center; margin-bottom: 15px;">
@@ -833,7 +749,13 @@
       </tbody>
     </table>
 
-    <div style="text-align: center; margin-top: 20px; margin-bottom: 10px;">
+    <div class="footer-page-num">vi</div>
+  </div>
+
+  <!-- PAGE 8: LIST OF TABLES (Page viii)
+       ========================================== -->
+  <div class="page">
+    <div style="text-align: center; margin-bottom: 15px;">
       <h2 style="font-size: 14pt;">LIST OF TABLES</h2>
     </div>
 
@@ -903,11 +825,11 @@
   </div>
 
   <!-- ==========================================
-       CHAPTER 1: INTRODUCTION & PROJECT OVERVIEW (Page 1 STARTS HERE!)
+       CHAPTER 1: INTRODUCTION (Page 1 STARTS HERE!)
        ========================================== -->
   <div class="page">
     <div class="chapter-header">
-      <div class="chapter-title">CHAPTER 1: INTRODUCTION & PROJECT OVERVIEW</div>
+      <div class="chapter-title">CHAPTER 1: INTRODUCTION</div>
     </div>
 
     <div class="section-title">1.1 Background and Motivation</div>
@@ -955,6 +877,14 @@
         ignoring 3D volumetric growth or shrinkage trends across multiple patient visits.</li>
     </ol>
 
+    <!-- PAGE 1 STARTS AT CHAPTER 1 -->
+    <div class="footer-page-num">1</div>
+  </div>
+
+  <!-- ==========================================
+       CHAPTER 1 CONTINUATION: INTRODUCTION & METHODOLOGY (Pages 2-16)
+       ========================================== -->
+  <div class="page">
     <div class="section-title">1.4 Objectives of the KLERT Project</div>
     <ul>
       <li><strong>Multi-Model Brain MRI Classification:</strong> Build and evaluate Custom BrainTumorCNN, ResNet-18, and
@@ -967,15 +897,6 @@
         synthesize classification, confidence scores, and progression metrics into structured diagnostic summaries.</li>
     </ul>
 
-    <!-- PAGE 1 STARTS AT CHAPTER 1 -->
-    <div class="footer-page-num">1</div>
-  </div>
-
-  <!-- ==========================================
-       CHAPTER 1 CONTINUATION: INTRODUCTION & METHODOLOGY (Pages 2-16)
-       ========================================== -->
-  <div class="page">
-    <div class="chapter-header"><div class="chapter-title">CHAPTER 1: INTRODUCTION & PROJECT OVERVIEW — CONTINUED</div></div>
     <div class="section-title">1.5 Clinical Context of Brain Tumor Assessment</div>
     <p>Brain tumor assessment is not a single classification decision. A radiologist must examine the location, signal characteristics, margins, edema, mass effect, and evolution of a lesion across multiple magnetic resonance imaging (MRI) sequences. In routine practice, this review is performed under time pressure and often requires comparison with earlier studies. KLERT is designed as a decision-support application that organizes these visual and computational steps in one workflow; it does not replace clinical judgement, radiological reporting, or histopathological confirmation.</p>
     <p>MRI is particularly valuable because it differentiates soft tissues without ionizing radiation. T1-weighted, T2-weighted, FLAIR, and contrast-enhanced sequences provide complementary views of the same anatomy. However, the information is distributed across many slices and may vary with scanner vendor, acquisition protocol, resolution, and patient positioning. A practical software system must therefore present results with enough context for a user to inspect the original image alongside the model output.</p>
@@ -984,7 +905,6 @@
   </div>
 
   <div class="page">
-    <div class="chapter-header"><div class="chapter-title">CHAPTER 1: INTRODUCTION & PROJECT OVERVIEW — CONTINUED</div></div>
     <div class="section-title">1.6 Users, Stakeholders, and Use Scenarios</div>
     <p>KLERT was planned around the needs of several stakeholders. Students and researchers need an understandable environment for experimenting with deep-learning models. Clinicians and radiology trainees need a concise visual summary that keeps the source scan visible. Technical administrators need predictable APIs, input validation, and a traceable execution path. A patient-facing user, if included in a future deployment, would require plain-language explanations and clear warnings about the limits of automated analysis.</p>
     <table><thead><tr><th>Stakeholder</th><th>Primary Need</th><th>KLERT Response</th></tr></thead><tbody>
@@ -998,7 +918,6 @@
   </div>
 
   <div class="page">
-    <div class="chapter-header"><div class="chapter-title">CHAPTER 1: INTRODUCTION & PROJECT OVERVIEW — CONTINUED</div></div>
     <div class="section-title">1.7 Scope, Boundaries, and Assumptions</div>
     <p>The implemented prototype accepts supported image inputs and demonstrates classification, explainability, and longitudinal comparison features. Its scope includes a web interface, a REST-style backend, trained image classifiers, Grad-CAM visualization, and structured result presentation. The project is intentionally limited to research and academic demonstration data; it is not integrated with a hospital PACS, electronic health record, or emergency workflow.</p>
     <p>Several assumptions keep the system technically manageable. Input scans are assumed to be de-identified and to represent brain MRI studies of usable quality. Labels used for evaluation are assumed to have been prepared by the source dataset. The selected models operate on two-dimensional representations, while the DICOM progression module demonstrates how volume and date information can be tracked when a compatible image series and segmentation are available.</p>
@@ -1009,7 +928,6 @@
   </div>
 
   <div class="page">
-    <div class="chapter-header"><div class="chapter-title">CHAPTER 1: INTRODUCTION & PROJECT OVERVIEW — CONTINUED</div></div>
     <div class="section-title">1.9 Functional and Quality Objectives</div>
     <p>The project objectives can be evaluated as observable system behaviours. First, the platform must accept an image and identify the most probable class using a selected classifier. Second, it must expose the probability distribution so that users can see alternatives rather than only a single label. Third, it must generate an explanation image that connects the prediction to regions in the scan. Fourth, it must enable a comparison workflow for longitudinal records.</p>
     <p>Quality objectives are equally important. The interface should be understandable for a first-time user, responsive on common screen sizes, and visually consistent. Results must remain linked to the input image and model used. The backend must reject invalid files cleanly, avoid path traversal, and return actionable error messages. Model evaluation should report more than accuracy, including precision, recall, and F1-score, because class-wise performance matters in a multi-class task.</p>
@@ -1025,7 +943,6 @@
   </div>
 
   <div class="page">
-    <div class="chapter-header"><div class="chapter-title">CHAPTER 1: INTRODUCTION & PROJECT OVERVIEW — CONTINUED</div></div>
     <div class="section-title">1.11 Project Contribution and Novelty</div>
     <p>The primary contribution of KLERT is the integration of several complementary capabilities into a coherent, educational workflow. Rather than treating classification as the final screen, the platform connects model comparison, visual explanation, plain-language context, and longitudinal information. This makes the result easier to inspect and demonstrates the broader engineering work required around a deep-learning model.</p>
     <p>KLERT also emphasizes usability. The dashboard presents common tasks—analysis, comparison, test results, and project guidance—as distinct entry points. This reduces the cognitive load of navigating a technical application. The design deliberately uses labels, status indicators, and explanatory text so that a user understands both what the system can do and what action is expected next.</p>
@@ -1038,7 +955,6 @@
   </div>
 
   <div class="page">
-    <div class="chapter-header"><div class="chapter-title">CHAPTER 1: INTRODUCTION & PROJECT OVERVIEW — CONTINUED</div></div>
     <div class="section-title">1.12 Organization of the Report</div>
     <p>This report progresses from problem definition to implementation and evaluation. Chapter 1 introduces the clinical context, users, constraints, and objectives. The added methodology section documents the repeatable approach used to prepare data, train models, generate explanations, and validate the integrated system. The following chapters then describe the literature basis, requirements, architecture, data pipeline, interface design, implementation, artificial-intelligence components, testing, results, security, and conclusions.</p>
     <p>Organizing the report in this sequence makes it possible to trace each feature back to a need and forward to a testable outcome. For example, the need for transparent predictions motivates Grad-CAM; Grad-CAM in turn creates requirements for model hooks, image normalization, and a side-by-side user interface. Similarly, the need to compare patient studies motivates a structured record of scan dates and volume estimates.</p>
@@ -1047,100 +963,10 @@
     <div class="footer-page-num">7</div>
   </div>
 
-  <div class="page">
-    <div class="chapter-header"><div class="chapter-title">RESEARCH METHODOLOGY & PROJECT WORKFLOW</div></div>
-    <div class="section-title">M.1 Methodological Framework</div>
-    <p>KLERT follows an iterative engineering methodology that combines machine-learning experimentation with web-application development. Each cycle begins with a user requirement or clinical-use observation, converts it into a measurable technical feature, and ends with validation. The approach is suitable for an academic project because it allows early prototypes to be tested and refined while keeping the training and evaluation process documented.</p>
-    <p>The workflow consists of seven connected stages: problem framing, data preparation, model development, evaluation, explainability, application integration, and verification. Outputs from one stage become controlled inputs to the next. For instance, the image size and normalization selected during preprocessing are reused during live inference, preventing a mismatch between experimental and deployed behaviour.</p>
-    <table><thead><tr><th>Stage</th><th>Key Activity</th><th>Evidence Produced</th></tr></thead><tbody>
-      <tr><td>1</td><td>Frame task and constraints</td><td>Requirements and success criteria</td></tr>
-      <tr><td>2</td><td>Prepare images and labels</td><td>Consistent dataset splits and transformations</td></tr>
-      <tr><td>3</td><td>Train and compare models</td><td>Metrics, checkpoints, and confusion analysis</td></tr>
-      <tr><td>4</td><td>Build XAI and comparison features</td><td>Heatmaps and longitudinal summaries</td></tr>
-      <tr><td>5</td><td>Integrate UI and API</td><td>Working end-to-end workflow</td></tr>
-    </tbody></table>
-    <div class="footer-page-num">8</div>
-  </div>
-
-  <div class="page">
-    <div class="chapter-header"><div class="chapter-title">RESEARCH METHODOLOGY & PROJECT WORKFLOW — CONTINUED</div></div>
-    <div class="section-title">M.2 Data Acquisition and Dataset Governance</div>
-    <p>The dataset stage begins by identifying MRI images with clear class labels and a permitted academic-use context. Data should be split into training, validation, and test partitions before model tuning so that the final test metrics represent unseen data. A stratified split is preferred because it preserves the approximate distribution of the four target classes across partitions.</p>
-    <p>Before use, records are checked for corrupt files, duplicate images, inconsistent dimensions, and label errors that are apparent from metadata or visual sampling. File names and folder structure are treated as implementation details; a manifest mapping each image to a class, split, and preprocessing status provides a more auditable basis for experiments. Where DICOM data is used, patient identifiers must be removed or replaced with controlled study identifiers.</p>
-    <p>Dataset governance is crucial because performance can be overstated when near-duplicate images or related patient studies appear in both training and testing partitions. The project therefore distinguishes convenience samples used in the UI from test data used to report model performance. This separation reduces leakage and makes the evaluation narrative more credible.</p>
-    <div class="footer-page-num">9</div>
-  </div>
-
-  <div class="page">
-    <div class="chapter-header"><div class="chapter-title">RESEARCH METHODOLOGY & PROJECT WORKFLOW — CONTINUED</div></div>
-    <div class="section-title">M.3 Image Preprocessing and Input Standardization</div>
-    <p>Raw medical images cannot be passed directly to a neural network without consistent preparation. KLERT uses a deterministic preprocessing pipeline that converts supported files into RGB tensors, resizes them to the expected model resolution, scales pixel values, and applies the normalization associated with the training configuration. The same sequence is used during offline training and online prediction.</p>
-    <p>Controlled augmentation may be applied only to the training subset. Small rotations, shifts, zoom, and intensity variation can increase robustness to realistic acquisition variation, while aggressive transformations that distort anatomy should be avoided. Validation and test images are not randomly augmented; they receive only the deterministic preprocessing needed by the model.</p>
-    <p>Standardization has a practical engineering benefit as well. By centralizing preprocessing in a reusable function, the API, Grad-CAM generator, and evaluation scripts all interpret images in the same way. This prevents subtle discrepancies in colour channels, scaling, or image orientation from changing a prediction between development and deployment.</p>
-    <div class="footer-page-num">10</div>
-  </div>
-
-  <div class="page">
-    <div class="chapter-header"><div class="chapter-title">RESEARCH METHODOLOGY & PROJECT WORKFLOW — CONTINUED</div></div>
-    <div class="section-title">M.4 Model Development and Training Strategy</div>
-    <p>The project evaluates a custom convolutional neural network together with pretrained ResNet-18 and VGG-16 alternatives. The custom CNN provides an architecture tailored to the problem and is easier to inspect layer by layer. The pretrained models provide transfer-learning baselines whose learned visual features can be adapted to MRI classification through replacement of the final classification layer.</p>
-    <p>During training, each epoch performs a forward pass, computes multi-class cross-entropy loss, back-propagates gradients, and updates parameters through an optimizer such as Adam. The validation set is monitored after every epoch. The best checkpoint is retained based on validation performance rather than simply using the final epoch, which helps reduce the impact of overfitting.</p>
-    <p>Hyperparameters—including learning rate, batch size, augmentation strength, number of epochs, and dropout—are adjusted through controlled experiments. Changes are logged with the model name and preprocessing version so that a reported result can be reproduced. The selected model is the one that balances strong quantitative metrics with stable, clinically plausible attention maps.</p>
-    <div class="footer-page-num">11</div>
-  </div>
-
-  <div class="page">
-    <div class="chapter-header"><div class="chapter-title">RESEARCH METHODOLOGY & PROJECT WORKFLOW — CONTINUED</div></div>
-    <div class="section-title">M.5 Evaluation Protocol and Metric Interpretation</div>
-    <p>Accuracy measures the proportion of correctly classified samples, but it is not sufficient on its own. KLERT reports precision, recall, and F1-score because they reveal how a model behaves for each tumor category. Precision indicates how often a predicted class is correct, recall indicates how many actual cases of a class are found, and F1-score balances these two measures.</p>
-    <p>A confusion matrix is used to inspect the pattern of errors. For example, repeated confusion between two classes may indicate similar visual features, limited dataset diversity, or a need for additional sequences. Error analysis also includes visual inspection of incorrectly classified images and their heatmaps. This helps determine whether the model is focusing on a plausible lesion region or on an irrelevant image artifact.</p>
-    <p>The final test set is used only after model selection decisions are complete. This preserves its role as an independent estimate of expected behaviour. Metrics are interpreted as evidence for this dataset and configuration, not as a universal clinical-performance claim.</p>
-    <div class="footer-page-num">12</div>
-  </div>
-
-  <div class="page">
-    <div class="chapter-header"><div class="chapter-title">RESEARCH METHODOLOGY & PROJECT WORKFLOW — CONTINUED</div></div>
-    <div class="section-title">M.6 Explainability Using Grad-CAM</div>
-    <p>Grad-CAM, or Gradient-weighted Class Activation Mapping, provides a visual explanation for a selected class prediction. It computes the gradient of that class score with respect to feature maps in a late convolutional layer. The gradients are pooled into channel weights, combined with the feature maps, rectified, and resized into a heatmap. Warm colours indicate areas that contributed more strongly to the selected class score.</p>
-    <p>The heatmap is useful only when presented alongside the original scan and interpreted with caution. It does not prove that a tumor is present, nor does it provide a pixel-perfect segmentation. Instead, it offers a review aid: a user can see whether the model’s attention overlaps a meaningful anatomical region or appears to rely on an implausible boundary or annotation.</p>
-    <div class="diagram-box">
-      <img src="assets/klert-gradcam-result.png" alt="KLERT display of an MRI scan, Grad-CAM heatmap, and diagnostic overlay" style="max-height: 360px; object-fit: contain;">
-      <div class="diagram-title">Figure 1.2: KLERT Grad-CAM result view with original MRI, activation heatmap, and diagnostic overlay.</div>
-    </div>
-    <div class="footer-page-num">13</div>
-  </div>
-
-  <div class="page">
-    <div class="chapter-header"><div class="chapter-title">RESEARCH METHODOLOGY & PROJECT WORKFLOW — CONTINUED</div></div>
-    <div class="section-title">M.7 Longitudinal DICOM Progression Analysis</div>
-    <p>Longitudinal analysis extends a single-scan classifier into a time-aware workflow. Each study is associated with a de-identified patient key, acquisition date, series metadata, and, where available, a tumor mask. The ordering of dates establishes a baseline and one or more follow-up observations. This enables the system to describe change rather than merely repeat independent predictions.</p>
-    <p>When masks and spacing information are available, volume can be estimated by multiplying the number of tumor voxels by the physical volume of each voxel. The baseline and latest measurements are compared to calculate absolute and percentage change. The interface communicates whether the trend indicates growth, stability, or shrinkage, while retaining the individual study dates and values for review.</p>
-    <p>Registration, segmentation quality, and variation in acquisition planes can all affect a volume comparison. Accordingly, the prototype presents the calculation as an analytical aid and keeps the underlying measurements visible. A production system would add image registration checks, clinical review steps, and data provenance controls.</p>
-    <div class="footer-page-num">14</div>
-  </div>
-
-  <div class="page">
-    <div class="chapter-header"><div class="chapter-title">RESEARCH METHODOLOGY & PROJECT WORKFLOW — CONTINUED</div></div>
-    <div class="section-title">M.8 Application Integration and API Workflow</div>
-    <p>The integration stage connects the browser interface to the model-serving backend. On upload, the client sends a supported image to an analysis endpoint. The server validates type and size, converts the image through the standard preprocessing routine, loads or selects the requested model, and returns the predicted class, confidence distribution, and derived visualization data. The frontend then renders a result panel without exposing internal model details.</p>
-    <p>Separation of concerns keeps the application maintainable. The UI manages interaction, display state, and accessibility. The API manages validation, inference requests, and structured responses. Model modules manage weights and prediction logic. Utility modules handle image transformations, Grad-CAM generation, and report formatting. This separation also allows individual components to be tested independently.</p>
-    <p>Error paths are treated as first-class workflow cases. Unsupported uploads, missing model files, malformed requests, and unavailable resources produce descriptive responses rather than silent failure. This makes the project more robust for demonstration and gives future developers a clear point at which to add authentication, audit logging, and deployment configuration.</p>
-    <div class="footer-page-num">15</div>
-  </div>
-
-  <div class="page">
-    <div class="chapter-header"><div class="chapter-title">RESEARCH METHODOLOGY & PROJECT WORKFLOW — CONTINUED</div></div>
-    <div class="section-title">M.9 Verification, Reproducibility, and Method Summary</div>
-    <p>Verification is performed at multiple levels. Unit-oriented checks confirm that preprocessing returns the expected shape, probability outputs sum to one, and invalid files are rejected. Integration checks exercise the route from upload to displayed result. Interface checks confirm that controls remain usable on common screen sizes. Finally, model evaluation and qualitative heatmap review provide evidence that the AI components behave as intended on the selected test data.</p>
-    <p>Reproducibility requires recording the dataset version, data split, random seed, preprocessing configuration, model architecture, hyperparameters, dependency versions, and evaluation script. These records are as important as the saved model weights: without them, a future result cannot be compared fairly with the original experiment. KLERT’s modular organization is intended to support this discipline.</p>
-    <p>In summary, the methodology links responsible data handling to consistent preprocessing, comparative model training, transparent explanation, safe integration, and repeatable evaluation. The remaining chapters provide the detailed technical design and evidence for each part of this workflow.</p>
-    <div class="footer-page-num">16</div>
-  </div>
-
-  <!-- CHAPTER 2: LITERATURE SURVEY (Page 17) -->
+  <!-- CHAPTER 2: LITERATURE SURVEY (Page 8) -->
   <div class="page">
     <div class="chapter-header">
-      <div class="chapter-title">CHAPTER 2: LITERATURE SURVEY & COMPARATIVE STUDY</div>
+      <div class="chapter-title">CHAPTER 2: LITERATURE SURVEY</div>
     </div>
 
     <div class="section-title">2.1 Study of Contemporary Neuro-Imaging AI Platforms</div>
@@ -1228,13 +1054,13 @@
       DICOM progression math, and automated LLM diagnostic reporting into a single accessible platform. <strong>KLERT
         directly fills this gap.</strong></p>
 
-    <div class="footer-page-num">17</div>
+    <div class="footer-page-num">8</div>
   </div>
 
-  <!-- CHAPTER 3: REQUIREMENTS SPECIFICATION (Page 18) -->
+  <!-- CHAPTER 3: PROBLEM STATEMENT AND OBJECTIVES (Page 9) -->
   <div class="page">
     <div class="chapter-header">
-      <div class="chapter-title">CHAPTER 3: REQUIREMENTS SPECIFICATION & FEASIBILITY ANALYSIS</div>
+      <div class="chapter-title">CHAPTER 3: PROBLEM STATEMENT AND OBJECTIVES</div>
     </div>
 
     <div class="section-title">3.1 Comprehensive Feasibility Study</div>
@@ -1306,13 +1132,83 @@
       </tbody>
     </table>
 
-    <div class="footer-page-num">18</div>
+    <div class="footer-page-num">9</div>
   </div>
 
-  <!-- CHAPTER 4: SYSTEM ARCHITECTURE (Page 19) -->
+  <div class="page">
+    <div class="chapter-header"><div class="chapter-title">CHAPTER 4: RESEARCH METHODOLOGY</div></div>
+    <div class="section-title">4.1 Methodological Framework</div>
+    <p>KLERT follows an iterative engineering methodology that combines machine-learning experimentation with web-application development. Each cycle begins with a user requirement or clinical observation, converts it into a measurable feature, and ends with validation. The complete workflow covers problem framing, data preparation, model development, evaluation, explainability, application integration, and verification. Outputs from one stage become controlled inputs to the next, which prevents mismatches between experimentation and live inference.</p>
+    <div class="table-title">Table 4.1: Methodology Stages and Evidence</div>
+    <table><thead><tr><th>Stage</th><th>Key Activity</th><th>Evidence Produced</th></tr></thead><tbody>
+      <tr><td>1</td><td>Frame task and constraints</td><td>Requirements and success criteria</td></tr>
+      <tr><td>2</td><td>Prepare images and labels</td><td>Consistent splits and transformations</td></tr>
+      <tr><td>3</td><td>Train and compare models</td><td>Metrics and error analysis</td></tr>
+      <tr><td>4</td><td>Build XAI and progression features</td><td>Heatmaps and longitudinal summaries</td></tr>
+      <tr><td>5</td><td>Integrate UI and API</td><td>Working end-to-end workflow</td></tr>
+    </tbody></table>
+    <div class="section-title">4.2 Data Acquisition and Dataset Governance</div>
+    <p>The project uses labelled brain MRI images for four-class classification and compatible DICOM series with masks for longitudinal analysis. Data is divided into training, validation, and independent test partitions before model tuning; stratification helps preserve class balance. Files are checked for corruption, duplicates, inconsistent dimensions, and apparent label errors. A manifest records each image, class, split, and preprocessing status, while DICOM records must be de-identified and assigned controlled study identifiers.</p>
+    <p>Convenience samples used in the interface are kept separate from evaluation data. This reduces leakage from near-duplicate images or related patient studies and makes the reported metrics more credible.</p>
+    <div class="footer-page-num">10</div>
+  </div>
+
+  <div class="page">
+    <div class="section-title">4.3 Image Preprocessing and Input Standardization</div>
+    <p>KLERT converts supported files into consistent RGB tensors, resizes them to the expected model resolution, scales pixel values, and applies the normalization used during training. Controlled augmentation may be applied only to training data through small rotations, shifts, zoom, or intensity variation; validation and test images receive deterministic preprocessing only. A shared transformation function is used by training, evaluation, the API, and Grad-CAM generation so that colour channels, scaling, and orientation remain consistent.</p>
+    <div class="section-title">4.4 Model Development and Training Strategy</div>
+    <p>The study evaluates a custom BrainTumorCNN together with pretrained ResNet-18 and VGG-16 baselines. The custom model is tailored to the task and remains easy to inspect, while the pretrained models provide transfer-learning comparisons through replacement of their final classification layers. Training uses a forward pass, multi-class cross-entropy loss, back-propagation, and an optimizer such as Adam. Validation performance is monitored after each epoch and the best checkpoint is retained.</p>
+    <p>Learning rate, batch size, augmentation strength, epochs, and dropout are adjusted through controlled experiments. Model names, preprocessing versions, hyperparameters, and checkpoint choices are recorded so that results can be reproduced. The final choice considers both quantitative performance and the stability of its attention maps.</p>
+    <div class="section-title">4.5 Evaluation Protocol</div>
+    <p>Accuracy is reported together with precision, recall, and F1-score because the task contains several tumour classes. Confusion matrices and incorrectly classified images are reviewed to identify class overlap, dataset limitations, and attention to irrelevant artefacts. The independent test set is used only after model selection is complete; the resulting metrics describe the selected dataset and configuration rather than universal clinical performance.</p>
+    <div class="footer-page-num">11</div>
+  </div>
+
+  <div class="page">
+    <div class="section-title">4.6 Explainability Using Grad-CAM</div>
+    <p>Grad-CAM provides a visual explanation for a selected class prediction. The gradient of the class score is calculated with respect to feature maps in a late convolutional layer. These gradients are pooled into channel weights, combined with the feature maps, rectified, and resized into a heatmap. The result is displayed with the source scan so that a reviewer can judge whether the model attends to a meaningful anatomical region.</p>
+    <p>The heatmap is a review aid, not a proof of tumour presence and not a pixel-perfect segmentation. It may reveal reliance on a plausible lesion region, an irrelevant boundary, or an annotation artefact. This limitation is communicated alongside the visualization.</p>
+    <div class="diagram-box">
+      <img src="assets/klert-gradcam-result.png" alt="KLERT display of an MRI scan, Grad-CAM heatmap, and diagnostic overlay" style="max-height: 280px; object-fit: contain;">
+      <div class="diagram-title">Figure 4.1: KLERT Grad-CAM result view with original MRI, activation heatmap, and diagnostic overlay.</div>
+    </div>
+    <div class="section-title">4.7 Longitudinal DICOM Progression Analysis</div>
+    <p>Each compatible study is associated with a de-identified patient key, acquisition date, series metadata, and, where available, a binary tumour mask. Dates establish a baseline and follow-up observations. When mask and spacing data are available, active voxels are multiplied by their physical voxel dimensions to estimate volume. Baseline and latest measurements are compared using absolute and percentage change, while dates and individual values remain visible for review.</p>
+    <p>Registration quality, segmentation accuracy, acquisition planes, and scanner variation can affect comparisons. The prototype therefore presents progression as an analytical aid; a production system would add registration checks, clinical review, and provenance controls.</p>
+    <div class="footer-page-num">12</div>
+  </div>
+
+  <div class="page">
+    <div class="section-title">4.8 Application Integration and API Workflow</div>
+    <p>During integration, the browser sends a supported image or DICOM request to the model-serving backend. The server validates type and size, applies the shared preprocessing routine, selects the requested model, performs inference, and returns the predicted class, confidence distribution, and visualization data. The frontend renders the result without exposing internal model details.</p>
+    <p>Separation of concerns keeps the system maintainable: the UI manages interaction and accessibility; the API manages validation and structured responses; model modules manage weights and prediction logic; and utility modules handle transformations, Grad-CAM, DICOM processing, and report formatting. This structure also permits independent component testing.</p>
+    <div class="section-title">4.9 Error Handling, Safety, and Responsible Use</div>
+    <p>Unsupported uploads, missing model files, malformed requests, and unavailable resources must produce descriptive responses rather than silent failure. Demonstration files should be de-identified and handled under an approved retention policy. The system is an educational and research prototype, so its outputs require human interpretation and must not be treated as a diagnosis.</p>
+    <div class="section-title">4.10 Verification and Reproducibility</div>
+    <p>Verification covers preprocessing shapes, probability outputs, invalid-file rejection, upload-to-result integration, responsive interface states, model evaluation, and qualitative heatmap review. Reproducibility requires recording the dataset version, data split, random seed, preprocessing configuration, architecture, hyperparameters, dependency versions, evaluation script, and saved model weights. Together, these controls connect responsible data handling with consistent preprocessing, comparative training, transparent explanation, safe integration, and repeatable evaluation.</p>
+    <div class="footer-page-num">13</div>
+  </div>
+
+  <div class="page">
+    <div class="section-title">4.11 Method Summary and Quality Controls</div>
+    <p>The methodology is designed to keep every major project claim traceable to an input, a processing step, and an evaluation result. Dataset governance limits leakage; standard preprocessing keeps training and deployment aligned; comparative model training provides a meaningful baseline; Grad-CAM makes predictions inspectable; DICOM metadata supports physical volume calculations; and API validation protects the integrated workflow.</p>
+    <p>Quality control is applied at both the model and application levels. Model quality is examined through class-aware metrics, confusion patterns, independent testing, and visual inspection of explanations. Application quality is examined through valid and invalid requests, route behaviour, report generation, concurrent use, and responsive layout checks. Any future clinical deployment would additionally require prospective multi-institution validation, privacy review, bias assessment, regulatory oversight, and qualified human supervision.</p>
+    <div class="table-title">Table 4.2: Methodology Quality Checklist</div>
+    <table><thead><tr><th>Control Area</th><th>Method Applied</th><th>Expected Outcome</th></tr></thead><tbody>
+      <tr><td>Data</td><td>Split discipline, manifest, de-identification</td><td>Reduced leakage and traceable inputs</td></tr>
+      <tr><td>Models</td><td>Shared preprocessing and independent testing</td><td>Comparable and reproducible metrics</td></tr>
+      <tr><td>Explainability</td><td>Grad-CAM with source-image review</td><td>Inspectable model evidence</td></tr>
+      <tr><td>Progression</td><td>DICOM dates, masks, and physical spacing</td><td>Auditable volume comparisons</td></tr>
+      <tr><td>Software</td><td>Validation, integration, and error-path tests</td><td>Reliable user workflow</td></tr>
+    </tbody></table>
+    <p>This five-page methodology provides the foundation for the following system-analysis and implementation chapters without duplicating their detailed architecture or code descriptions.</p>
+    <div class="footer-page-num">14</div>
+  </div>
+
+  <!-- CHAPTER 5: SYSTEM ANALYSIS (Page 19) -->
   <div class="page">
     <div class="chapter-header">
-      <div class="chapter-title">CHAPTER 4: SYSTEM ARCHITECTURE & STRUCTURAL MODELING</div>
+      <div class="chapter-title">CHAPTER 5: SYSTEM ANALYSIS</div>
     </div>
 
     <div class="section-title">4.1 High-Level 3-Tier System Architecture</div>
@@ -1394,14 +1290,11 @@
       <div class="diagram-title">Figure 4.2: DFD Level 0 Context Diagram of KLERT Platform</div>
     </div>
 
-    <div class="footer-page-num">19</div>
+    <div class="footer-page-num">15</div>
   </div>
 
-  <!-- CHAPTER 5: DATABASE & DATA PIPELINE (Page 20) -->
+  <!-- CHAPTER 5: SYSTEM ANALYSIS (Page 20) -->
   <div class="page">
-    <div class="chapter-header">
-      <div class="chapter-title">CHAPTER 5: DATABASE DESIGN & DATA PIPELINE MODELING</div>
-    </div>
 
     <div class="section-title">5.1 Dataset Pipeline & DICOM Structure</div>
     <p>KLERT operates on two primary data sources: the Kaggle Brain Tumor MRI Dataset (7,023 images across 4 classes)
@@ -1454,14 +1347,11 @@ transform = transforms.Compose([
     transforms.ToTensor()
 ])</code></pre>
 
-    <div class="footer-page-num">20</div>
+    <div class="footer-page-num">16</div>
   </div>
 
-  <!-- CHAPTER 6: UI/UX ENGINEERING (Page 21) -->
+  <!-- CHAPTER 5: SYSTEM ANALYSIS (Page 21) -->
   <div class="page">
-    <div class="chapter-header">
-      <div class="chapter-title">CHAPTER 6: UI/UX ENGINEERING & DESIGN SYSTEM</div>
-    </div>
 
     <div class="section-title">6.1 HCI Principles in Medical Diagnostics</div>
     <p>Medical AI interfaces must minimize cognitive load and eliminate ambiguity. KLERT's frontend follows strict
@@ -1501,13 +1391,13 @@ transform = transforms.Compose([
       </tbody>
     </table>
 
-    <div class="footer-page-num">21</div>
+    <div class="footer-page-num">17</div>
   </div>
 
-  <!-- CHAPTER 7: IMPLEMENTATION (Page 22) -->
+  <!-- CHAPTER 6: IMPLEMENTATION (Page 22) -->
   <div class="page">
     <div class="chapter-header">
-      <div class="chapter-title">CHAPTER 7: IMPLEMENTATION & CODE MODULE DETAILS</div>
+      <div class="chapter-title">CHAPTER 6: IMPLEMENTATION</div>
     </div>
 
     <div class="section-title">7.1 Core RESTful API Endpoints</div>
@@ -1568,14 +1458,11 @@ transform = transforms.Compose([
         "probabilities": {class_names[i]: round(prob.item() * 100.0, 2) for i, prob in enumerate(probabilities)}
     }</code></pre>
 
-    <div class="footer-page-num">22</div>
+    <div class="footer-page-num">18</div>
   </div>
 
-  <!-- CHAPTER 8: ARTIFICIAL INTELLIGENCE (Page 23) -->
+  <!-- CHAPTER 6: IMPLEMENTATION (Page 23) -->
   <div class="page">
-    <div class="chapter-header">
-      <div class="chapter-title">CHAPTER 8: ARTIFICIAL INTELLIGENCE & SMART CAPABILITIES</div>
-    </div>
 
     <div class="section-title">8.1 AI in Digital Healthcare & CSE-AIML Alignment</div>
     <p>As a project engineered within the Department of CSE (Artificial Intelligence & Machine Learning), KLERT
@@ -1611,13 +1498,13 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
         spacing (mm) and \(t\) is slice thickness (mm).</div>
     </div>
 
-    <div class="footer-page-num">23</div>
+    <div class="footer-page-num">19</div>
   </div>
 
-  <!-- CHAPTER 9: SYSTEM TESTING & QA (Page 24) -->
+  <!-- CHAPTER 7: TESTING AND VALIDATION (Page 24) -->
   <div class="page">
     <div class="chapter-header">
-      <div class="chapter-title">CHAPTER 9: SYSTEM TESTING & QUALITY ASSURANCE</div>
+      <div class="chapter-title">CHAPTER 7: TESTING AND VALIDATION</div>
     </div>
 
     <div class="section-title">9.1 Comprehensive Test Execution Matrix</div>
@@ -1776,13 +1663,13 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
       </tbody>
     </table>
 
-    <div class="footer-page-num">24</div>
+    <div class="footer-page-num">20</div>
   </div>
 
-  <!-- CHAPTER 10: RESULTS & SNAPSHOTS (Page 25) -->
+  <!-- CHAPTER 8: RESULTS AND DISCUSSION (Page 25) -->
   <div class="page">
     <div class="chapter-header">
-      <div class="chapter-title">CHAPTER 10: RESULTS, SYSTEM SNAPSHOTS & DISCUSSION</div>
+      <div class="chapter-title">CHAPTER 8: RESULTS AND DISCUSSION</div>
     </div>
 
     <div class="section-title">10.1 Model Evaluation & Benchmark Comparison</div>
@@ -1946,13 +1833,13 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
         Shrinkage -53.9%)</div>
     </div>
 
-    <div class="footer-page-num">25</div>
+    <div class="footer-page-num">21</div>
   </div>
 
-  <!-- CHAPTER 11: SECURITY & DEPLOYMENT (Page 26) -->
+  <!-- CHAPTER 9: CONCLUSION AND FUTURE SCOPE (Page 26) -->
   <div class="page">
     <div class="chapter-header">
-      <div class="chapter-title">CHAPTER 11: SECURITY, DEPLOYMENT & DEVOPS</div>
+      <div class="chapter-title">CHAPTER 9: CONCLUSION AND FUTURE SCOPE</div>
     </div>
 
     <div class="section-title">11.1 Security Policies & Path Traversal Protection</div>
@@ -1993,15 +1880,11 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
       </tbody>
     </table>
 
-    <div class="footer-page-num">26</div>
+    <div class="footer-page-num">22</div>
   </div>
 
-  <!-- CHAPTER 12: CONCLUSION & FUTURE ROADMAP (Page 27) -->
+  <!-- CHAPTER 9: CONCLUSION AND FUTURE SCOPE (Page 27) -->
   <div class="page">
-    <div class="chapter-header">
-      <div class="chapter-title">CHAPTER 12: CONCLUSION & FUTURE ROADMAP</div>
-    </div>
-
     <div class="section-title">12.1 Project Summary & Key Achievements</div>
     <p>The <strong>KLERT</strong> project successfully designed, engineered, tested, and deployed a comprehensive
       explainable medical AI platform for brain MRI classification and 3D DICOM progression tracking. Key achievements
@@ -2028,7 +1911,7 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
         protocols.</li>
     </ul>
 
-    <div class="footer-page-num">27</div>
+    <div class="footer-page-num">23</div>
   </div>
 
   <!-- REFERENCES & APPENDIX (Page 28) -->
@@ -2088,41 +1971,10 @@ class BrainTumorCNN(nn.Module):
     def forward(self, x):
         return self.classifier(self.features(x))</code></pre>
 
-    <div class="footer-page-num">28</div>
+    <div class="footer-page-num">24</div>
   </div>
 
-  <!-- EXAMINER SIGNATURES (Page 29) -->
-  <div class="page">
-    <div class="header-box">
-      <div class="header-box-title">Department of Computer Science & Engineering (AIML)</div>
-      <div style="font-size: 8pt; font-weight: bold; color: var(--primary-navy);">SSIPMT RAIPUR</div>
-    </div>
-
-    <div style="text-align: center; margin-top: 40px; margin-bottom: 40px;">
-      <h2 style="font-size: 16pt;">INTERNAL & EXTERNAL EXAMINER SIGNATURES</h2>
-      <div style="font-size: 11pt; color: var(--text-muted); margin-top: 5px;">Project Title: "KLERT: Explainable
-        Multi-Model AI & Longitudinal Tumor Progression System"</div>
-    </div>
-
-    <div style="margin-top: 60px;">
-      <div class="signature-line" style="width: 100%;">Internal Examiner - I</div>
-      <div style="text-align: center; margin-top: 5px;">Name / Signature / Date</div>
-    </div>
-
-    <div style="margin-top: 70px;">
-      <div class="signature-line" style="width: 100%;">Internal Examiner - II</div>
-      <div style="text-align: center; margin-top: 5px;">Name / Signature / Date</div>
-    </div>
-
-    <div style="margin-top: 70px;">
-      <div class="signature-line" style="width: 100%;">External Examiner</div>
-      <div style="text-align: center; margin-top: 5px;">Name / Signature / Date</div>
-    </div>
-
-    <div class="footer-page-num">29</div>
-  </div>
-
-  <!-- SUPERVISOR APPROVAL (Page 30) -->
+  <!-- SUPERVISOR APPROVAL (Page 29) -->
   <div class="page">
     <div class="header-box">
       <div class="header-box-title">Department of Computer Science & Engineering (AIML)</div>
@@ -2144,11 +1996,11 @@ class BrainTumorCNN(nn.Module):
     </div>
 
     <div style="margin-top: 90px;">
-      <div class="signature-line" style="width: 100%;">Principal / Director</div>
+      <div class="signature-line" style="width: 100%;">Principal</div>
       <div style="text-align: center; margin-top: 5px;">SSIPMT, Raipur - Signature / Date</div>
     </div>
 
-    <div class="footer-page-num">30</div>
+    <div class="footer-page-num">25</div>
   </div>
 
 </body>
