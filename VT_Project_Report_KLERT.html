@@ -101,6 +101,7 @@
       font-size: 11pt;
       font-weight: 700;
       color: var(--primary-navy);
+      text-align: center;
     }
 
     .institution-brand {
@@ -143,6 +144,44 @@
       height: 124px !important;
       max-width: none;
       transform: translate(-2px, -2px);
+    }
+
+    .abstract-page .header-box {
+      justify-content: center;
+    }
+
+    .abstract-page .header-box-title {
+      font-size: 16pt;
+    }
+
+    .contents-page,
+    .list-page {
+      padding-top: 20mm;
+    }
+
+    .contents-page table,
+    .list-page table {
+      margin-top: 24px;
+      height: 64%;
+    }
+
+    .contents-page th,
+    .contents-page td,
+    .list-page th,
+    .list-page td {
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .list-tables-page th,
+    .list-tables-page td {
+      padding-top: 15px;
+      padding-bottom: 15px;
+    }
+
+    .contents-page td,
+    .list-page td {
+      vertical-align: middle;
     }
 
     .cover-details .meta-label {
@@ -569,7 +608,7 @@
   <!-- ==========================================
        PAGE 5: ABSTRACT (Page v)
        ========================================== -->
-  <div class="page">
+  <div class="page abstract-page">
     <div class="header-box">
       <div class="header-box-title">ABSTRACT</div>
     </div>
@@ -612,7 +651,7 @@
   <!-- ==========================================
        PAGE 6: TABLE OF CONTENTS (Page vi)
        ========================================== -->
-  <div class="page">
+  <div class="page contents-page">
     <div style="text-align: center; margin-bottom: 20px;">
       <h2 style="font-size: 16pt;">TABLE OF CONTENTS</h2>
     </div>
@@ -670,7 +709,7 @@
   <!-- ==========================================
        PAGE 7: LIST OF FIGURES (Page vii)
        ========================================== -->
-  <div class="page">
+  <div class="page list-page">
     <div style="text-align: center; margin-bottom: 15px;">
       <h2 style="font-size: 15pt;">LIST OF FIGURES</h2>
     </div>
@@ -684,72 +723,17 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Figure 4.1</td>
-          <td>Cloud-Native 3-Tier Edge Architecture of KLERT Platform</td>
-          <td style="text-align: right;">4</td>
-        </tr>
-        <tr>
-          <td>Figure 4.2</td>
-          <td>DFD Level 0 (Context Diagram) of KLERT System</td>
-          <td style="text-align: right;">4</td>
-        </tr>
-        <tr>
-          <td>Figure 4.3</td>
-          <td>DFD Level 1: Core Multi-Model & DICOM Workflows</td>
-          <td style="text-align: right;">4</td>
-        </tr>
-        <tr>
-          <td>Figure 4.4</td>
-          <td>DFD Level 2: Grad-CAM Explainable Heatmap & DICOM Progression Pipeline</td>
-          <td style="text-align: right;">4</td>
-        </tr>
-        <tr>
-          <td>Figure 4.5</td>
-          <td>Comprehensive Use Case Diagram for Radiologists & Clinicians</td>
-          <td style="text-align: right;">4</td>
-        </tr>
-        <tr>
-          <td>Figure 4.7</td>
-          <td>Sequence Diagram: Multi-Model Inference & Grad-CAM Execution</td>
-          <td style="text-align: right;">4</td>
-        </tr>
-        <tr>
-          <td>Figure 5.1</td>
-          <td>Entity-Relationship (ER) & Data Flow Model for Medical MRI Series</td>
-          <td style="text-align: right;">5</td>
-        </tr>
-        <tr>
-          <td>Figure 6.1</td>
-          <td>Atomic Design Hierarchy & UI Component Tree</td>
-          <td style="text-align: right;">6</td>
-        </tr>
-        <tr>
-          <td>Figure 8.1</td>
-          <td>Custom BrainTumorCNN Convolutional Neural Network Architecture</td>
-          <td style="text-align: right;">8</td>
-        </tr>
-        <tr>
-          <td>Figure 8.2</td>
-          <td>Grad-CAM Visual Explainer Layer Activation Flow</td>
-          <td style="text-align: right;">8</td>
-        </tr>
-        <tr>
-          <td>Figure 10.1</td>
-          <td>Interactive Preset Test MRI Scan Library Interface</td>
-          <td style="text-align: right;">10</td>
-        </tr>
-        <tr>
-          <td>Figure 10.2</td>
-          <td>Multi-Model Brain MRI Classification & Confidence Score (Meningioma 99.5%)</td>
-          <td style="text-align: right;">10</td>
-        </tr>
-        <tr>
-          <td>Figure 10.3</td>
-          <td>3D DICOM Longitudinal Tumor Progression & Volume Curve (PGBM-019 Shrinkage -53.9%)</td>
-          <td style="text-align: right;">10</td>
-        </tr>
-      </tbody>
+        <tr><td>Figure 1.1</td><td>KLERT dashboard integrating scan analysis, comparison, evaluation, and project guidance</td><td style="text-align: right;">6</td></tr>
+        <tr><td>Figure 4.1</td><td>KLERT Grad-CAM result view with original MRI, activation heatmap, and diagnostic overlay</td><td style="text-align: right;">12</td></tr>
+        <tr><td>Figure 5.1</td><td>High-Level 3-Tier Edge Architecture of KLERT Platform</td><td style="text-align: right;">15</td></tr>
+        <tr><td>Figure 5.2</td><td>DFD Level 0 Context Diagram of KLERT Platform</td><td style="text-align: right;">15</td></tr>
+        <tr><td>Figure 5.3</td><td>Entity-Relationship and data-flow model for medical MRI series</td><td style="text-align: right;">16</td></tr>
+        <tr><td>Figure 5.4</td><td>Medical AI interface and design-system workflow</td><td style="text-align: right;">17</td></tr>
+        <tr><td>Figure 6.1</td><td>Custom BrainTumorCNN convolutional architecture</td><td style="text-align: right;">19</td></tr>
+        <tr><td>Figure 6.2</td><td>Grad-CAM and DICOM progression processing flow</td><td style="text-align: right;">19</td></tr>
+        <tr><td>Figure 8.1</td><td>Interactive preset test MRI dataset library interface</td><td style="text-align: right;">21</td></tr>
+        <tr><td>Figure 8.2</td><td>Multi-model brain MRI classification and confidence-score output</td><td style="text-align: right;">21</td></tr>
+        <tr><td>Figure 8.3</td><td>3D DICOM longitudinal tumor progression and volume curve</td><td style="text-align: right;">21</td></tr>      </tbody>
     </table>
 
     <div class="footer-page-num">vi</div>
@@ -757,7 +741,7 @@
 
   <!-- PAGE 8: LIST OF TABLES (Page viii)
        ========================================== -->
-  <div class="page">
+  <div class="page list-page list-tables-page">
     <div style="text-align: center; margin-bottom: 15px;">
       <h2 style="font-size: 14pt;">LIST OF TABLES</h2>
     </div>
@@ -771,57 +755,17 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Table 1.1</td>
-          <td>Key Stakeholder Needs & System Capability Matrix</td>
-          <td style="text-align: right;">1</td>
-        </tr>
-        <tr>
-          <td>Table 2.1</td>
-          <td>Comparative Matrix: KLERT vs. Contemporary Neuro-Imaging Systems</td>
-          <td style="text-align: right;">2</td>
-        </tr>
-        <tr>
-          <td>Table 2.2</td>
-          <td>Architectural Comparison: Monolithic Black-Box vs. Multi-Model XAI</td>
-          <td style="text-align: right;">2</td>
-        </tr>
-        <tr>
-          <td>Table 3.1</td>
-          <td>Hardware & Development Environment Specifications</td>
-          <td style="text-align: right;">3</td>
-        </tr>
-        <tr>
-          <td>Table 3.2</td>
-          <td>Software Stack & Library Dependencies</td>
-          <td style="text-align: right;">3</td>
-        </tr>
-        <tr>
-          <td>Table 6.1</td>
-          <td>Design Token Palette & HSL Color Specifications</td>
-          <td style="text-align: right;">6</td>
-        </tr>
-        <tr>
-          <td>Table 7.1</td>
-          <td>Core RESTful API Endpoints & Route Definitions</td>
-          <td style="text-align: right;">7</td>
-        </tr>
-        <tr>
-          <td>Table 9.1</td>
-          <td>Comprehensive Test Execution Matrix (20 Test Cases)</td>
-          <td style="text-align: right;">9</td>
-        </tr>
-        <tr>
-          <td>Table 10.1</td>
-          <td>Model Performance Benchmark (Accuracy, Precision, Recall, F1-Score)</td>
-          <td style="text-align: right;">10</td>
-        </tr>
-        <tr>
-          <td>Table 11.1</td>
-          <td>Security Headers & Vulnerability Mitigation Matrix</td>
-          <td style="text-align: right;">11</td>
-        </tr>
-      </tbody>
+        <tr><td>Table 2.1</td><td>Comparative Matrix: KLERT vs. Contemporary Neuro-Imaging Systems</td><td style="text-align: right;">8</td></tr>
+        <tr><td>Table 2.2</td><td>Architectural Comparison: Monolithic Black-Box vs. Multi-Model XAI</td><td style="text-align: right;">8</td></tr>
+        <tr><td>Table 3.1</td><td>Hardware and software stack</td><td style="text-align: right;">9</td></tr>
+        <tr><td>Table 4.1</td><td>Methodology Stages and Evidence</td><td style="text-align: right;">10</td></tr>
+        <tr><td>Table 4.2</td><td>Methodology Quality Checklist</td><td style="text-align: right;">14</td></tr>
+        <tr><td>Table 5.1</td><td>Data Dictionary - Prediction Response Entity</td><td style="text-align: right;">16</td></tr>
+        <tr><td>Table 5.2</td><td>Design Token Palette Specifications</td><td style="text-align: right;">17</td></tr>
+        <tr><td>Table 6.1</td><td>Core FastAPI Endpoint Specifications</td><td style="text-align: right;">18</td></tr>
+        <tr><td>Table 7.1</td><td>Comprehensive Test Execution Matrix</td><td style="text-align: right;">20</td></tr>
+        <tr><td>Table 8.1</td><td>Model Performance Benchmark Summary</td><td style="text-align: right;">21</td></tr>
+        <tr><td>Table 9.1</td><td>Security Vector Mitigation Matrix</td><td style="text-align: right;">22</td></tr>      </tbody>
     </table>
 
     <div class="footer-page-num">vii</div>
@@ -1214,7 +1158,7 @@
       <div class="chapter-title">CHAPTER 5: SYSTEM ANALYSIS</div>
     </div>
 
-    <div class="section-title">4.1 High-Level 3-Tier System Architecture</div>
+    <div class="section-title">5.1 High-Level 3-Tier System Architecture</div>
     <p>KLERT employs a modular three-tier architecture separating presentation, server logic, and deep learning
       persistence layers:</p>
 
@@ -1259,10 +1203,10 @@
         <text x="505" y="112" font-family="Inter" font-size="9" fill="#1e293b" text-anchor="middle">ResNet-18 & VGG-16
           (.pth)</text>
       </svg>
-      <div class="diagram-title">Figure 4.1: High-Level 3-Tier Edge Architecture of KLERT Platform</div>
+      <div class="diagram-title">Figure 5.1: High-Level 3-Tier Edge Architecture of KLERT Platform</div>
     </div>
 
-    <div class="section-title">4.2 Data Flow Diagrams (DFDs)</div>
+    <div class="section-title">5.2 Data Flow Diagrams (DFDs)</div>
     <p><strong>Context Diagram (DFD Level 0):</strong> The Radiologist submits raw MRI scans or DICOM series to the
       KLERT system, which processes the input through neural inference, Grad-CAM visualization, and volumetric math
       engines to return classification labels, heatmaps, progression charts, and LLM diagnostic reports.</p>
@@ -1290,7 +1234,7 @@
         <text x="430" y="58" font-family="Inter" font-size="10" font-weight="bold" fill="#ffffff"
           text-anchor="middle">CLINICIAN</text>
       </svg>
-      <div class="diagram-title">Figure 4.2: DFD Level 0 Context Diagram of KLERT Platform</div>
+      <div class="diagram-title">Figure 5.2: DFD Level 0 Context Diagram of KLERT Platform</div>
     </div>
 
     <div class="footer-page-num">15</div>
@@ -1299,7 +1243,7 @@
   <!-- CHAPTER 5: SYSTEM ANALYSIS (Page 20) -->
   <div class="page">
 
-    <div class="section-title">5.1 Dataset Pipeline & DICOM Structure</div>
+    <div class="section-title">5.3 Dataset Pipeline & DICOM Structure</div>
     <p>KLERT operates on two primary data sources: the Kaggle Brain Tumor MRI Dataset (7,023 images across 4 classes)
       for model training, and the National Cancer Institute <strong>Brain-Tumor-Progression (PGBM)</strong> dataset
       containing multi-sequence DICOM series (T1-weighted post-contrast scans and expert MaskTumor annotations) for 3D
@@ -1343,7 +1287,7 @@
       </tbody>
     </table>
 
-    <div class="section-title">5.2 Image Transformation & Normalization Pipeline</div>
+    <div class="section-title">5.4 Image Transformation & Normalization Pipeline</div>
     <pre><code># Image Preprocessing Transformation (pipeline.py)
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
@@ -1356,12 +1300,12 @@ transform = transforms.Compose([
   <!-- CHAPTER 5: SYSTEM ANALYSIS (Page 21) -->
   <div class="page">
 
-    <div class="section-title">6.1 HCI Principles in Medical Diagnostics</div>
+    <div class="section-title">5.5 HCI Principles in Medical Diagnostics</div>
     <p>Medical AI interfaces must minimize cognitive load and eliminate ambiguity. KLERT's frontend follows strict
       Human-Computer Interaction (HCI) standards: clear color contrast for probability bars, visual skull orientation
       cues for MRI slices, and side-by-side comparative views of raw MRI vs. Grad-CAM heatmaps.</p>
 
-    <div class="table-title">Table 6.1: Design Token Palette Specifications</div>
+    <div class="table-title">Table 5.2: Design Token Palette Specifications</div>
     <table>
       <thead>
         <tr>
@@ -1403,8 +1347,8 @@ transform = transforms.Compose([
       <div class="chapter-title">CHAPTER 6: IMPLEMENTATION</div>
     </div>
 
-    <div class="section-title">7.1 Core RESTful API Endpoints</div>
-    <div class="table-title">Table 7.1: Core FastAPI Endpoint Specifications</div>
+    <div class="section-title">6.1 Core RESTful API Endpoints</div>
+    <div class="table-title">Table 6.1: Core FastAPI Endpoint Specifications</div>
     <table>
       <thead>
         <tr>
@@ -1442,7 +1386,7 @@ transform = transforms.Compose([
       </tbody>
     </table>
 
-    <div class="section-title">7.2 Key Code Module: Multi-Model Inference (pipeline.py)</div>
+    <div class="section-title">6.2 Key Code Module: Multi-Model Inference (pipeline.py)</div>
     <pre><code>def classify_mri(image_path: str, model_type: str = "cnn"):
     target_model = models_dict.get(model_type.lower(), cnn_model)
     target_model.eval()
@@ -1467,12 +1411,12 @@ transform = transforms.Compose([
   <!-- CHAPTER 6: IMPLEMENTATION (Page 23) -->
   <div class="page">
 
-    <div class="section-title">8.1 AI in Digital Healthcare & CSE-AIML Alignment</div>
+    <div class="section-title">6.3 AI in Digital Healthcare & CSE-AIML Alignment</div>
     <p>As a project engineered within the Department of CSE (Artificial Intelligence & Machine Learning), KLERT
       incorporates deep learning feature extraction, spatial gradient backpropagation, 3D volumetric integration, and
       natural language processing (NLP) diagnostic report synthesis.</p>
 
-    <div class="section-title">8.2 Custom BrainTumorCNN Architecture</div>
+    <div class="section-title">6.4 Custom BrainTumorCNN Architecture</div>
     <p>The flagship Custom BrainTumorCNN consists of 5 sequential convolutional blocks followed by max-pooling, batch
       normalization, dropout (0.4), and fully connected layers:</p>
     <pre><code># Architectural Summary (models/cnn_model.py)
@@ -1482,7 +1426,7 @@ Conv2D(64 -> 128, kernel=3) -> BatchNorm -> ReLU -> MaxPool2D(2x2)
 Conv2D(128 -> 256, kernel=3) -> BatchNorm -> ReLU -> MaxPool2D(2x2)
 Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
 
-    <div class="section-title">8.3 Grad-CAM Mathematical Formulation</div>
+    <div class="section-title">6.5 Grad-CAM Mathematical Formulation</div>
     <p>Grad-CAM computes the neuron importance weight \(\alpha_k^c\) for feature map \(A^k\) with respect to class score
       \(y^c\):</p>
     <div
@@ -1491,7 +1435,7 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
       \[ L_{\text{Grad-CAM}}^c = \text{ReLU} \left( \sum_{k} \alpha_k^c A^k \right) \]
     </div>
 
-    <div class="section-title">8.4 3D DICOM Volumetric Progression Formula</div>
+    <div class="section-title">6.6 3D DICOM Volumetric Progression Formula</div>
     <p>Tumor volume \(V\) in \(\text{cm}^3\) across 3D DICOM slice stacks is calculated using physical voxel dimensions:
     </p>
     <div
@@ -1510,8 +1454,8 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
       <div class="chapter-title">CHAPTER 7: TESTING AND VALIDATION</div>
     </div>
 
-    <div class="section-title">9.1 Comprehensive Test Execution Matrix</div>
-    <div class="table-title">Table 9.1: Comprehensive Test Execution Matrix (20 Test Cases)</div>
+    <div class="section-title">7.1 Comprehensive Test Execution Matrix</div>
+    <div class="table-title">Table 7.1: Comprehensive Test Execution Matrix (20 Test Cases)</div>
     <table>
       <thead>
         <tr>
@@ -1675,11 +1619,11 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
       <div class="chapter-title">CHAPTER 8: RESULTS AND DISCUSSION</div>
     </div>
 
-    <div class="section-title">10.1 Model Evaluation & Benchmark Comparison</div>
+    <div class="section-title">8.1 Model Evaluation & Benchmark Comparison</div>
     <p>The three deep learning models were evaluated on an independent test dataset of 1,311 brain MRI images. Results
       demonstrate the superior classification capability of the Custom BrainTumorCNN model:</p>
 
-    <div class="table-title">Table 10.1: Model Performance Benchmark Summary</div>
+    <div class="table-title">Table 8.1: Model Performance Benchmark Summary</div>
     <table>
       <thead>
         <tr>
@@ -1715,7 +1659,7 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
       </tbody>
     </table>
 
-    <div class="section-title">10.2 System Snapshots & Live Interface Visualizations</div>
+    <div class="section-title">8.2 System Snapshots & Live Interface Visualizations</div>
 
     <div class="diagram-box">
       <!-- SVG Mockup of Preset Test Scans Library Interface -->
@@ -1746,7 +1690,7 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
         <circle cx="565" cy="115" r="40" fill="#020617" stroke="#475569" />
         <text x="465" y="178" font-size="8" fill="#e2e8f0">Sample MRI 3 Healthy / No Tumor</text>
       </svg>
-      <div class="diagram-title">Figure 10.1: Interactive Preset Test MRI Dataset Library Interface</div>
+      <div class="diagram-title">Figure 8.1: Interactive Preset Test MRI Dataset Library Interface</div>
     </div>
 
     <div class="diagram-box">
@@ -1785,7 +1729,7 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
 
         <text x="500" y="135" font-size="8" fill="#94a3b8">Pituitary Tumor: 0.4%</text>
       </svg>
-      <div class="diagram-title">Figure 10.2: Multi-Model Brain MRI Classification & Confidence Score Output (Meningioma
+      <div class="diagram-title">Figure 8.2: Multi-Model Brain MRI Classification & Confidence Score Output (Meningioma
         99.5%)</div>
     </div>
 
@@ -1832,7 +1776,7 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
         <text x="430" y="154" font-size="8" fill="#ffffff">Session 2: 10-02-1991</text>
         <text x="615" y="154" font-size="8" fill="#10b981" font-weight="bold">0.586 cm³</text>
       </svg>
-      <div class="diagram-title">Figure 10.3: 3D DICOM Longitudinal Tumor Progression & Volume Curve (Patient PGBM-019
+      <div class="diagram-title">Figure 8.3: 3D DICOM Longitudinal Tumor Progression & Volume Curve (Patient PGBM-019
         Shrinkage -53.9%)</div>
     </div>
 
@@ -1845,7 +1789,7 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
       <div class="chapter-title">CHAPTER 9: CONCLUSION AND FUTURE SCOPE</div>
     </div>
 
-    <div class="section-title">11.1 Security Policies & Path Traversal Protection</div>
+    <div class="section-title">9.1 Security Policies & Path Traversal Protection</div>
     <p>To prevent malicious client requests from accessing sensitive host system files, KLERT implements rigorous path
       resolution in <code>config.py</code>:</p>
 
@@ -1855,7 +1799,7 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
         raise HTTPException(status_code=400, detail="Path escapes dataset root")
     return candidate</code></pre>
 
-    <div class="table-title">Table 11.1: Security Vector Mitigation Matrix</div>
+    <div class="table-title">Table 9.1: Security Vector Mitigation Matrix</div>
     <table>
       <thead>
         <tr>
@@ -1888,7 +1832,7 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
 
   <!-- CHAPTER 9: CONCLUSION AND FUTURE SCOPE (Page 27) -->
   <div class="page">
-    <div class="section-title">12.1 Project Summary & Key Achievements</div>
+    <div class="section-title">9.2 Project Summary & Key Achievements</div>
     <p>The <strong>KLERT</strong> project successfully designed, engineered, tested, and deployed a comprehensive
       explainable medical AI platform for brain MRI classification and 3D DICOM progression tracking. Key achievements
       include:</p>
@@ -1901,13 +1845,13 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
       <li>Integrated Gemini LLM AI Clinical Agent for automated diagnostic report synthesis.</li>
     </ul>
 
-    <div class="section-title">12.2 Limitations of Current Version</div>
+    <div class="section-title">9.3 Limitations of Current Version</div>
     <ul>
       <li>3D tumor volume calculation relies on binary MaskTumor segmentations.</li>
       <li>LLM clinical reporting requires active network connectivity to the Gemini API.</li>
     </ul>
 
-    <div class="section-title">12.3 Future Enhancements</div>
+    <div class="section-title">9.4 Future Enhancements</div>
     <ul>
       <li>Integration of 3D U-Net neural architectures for automated real-time 3D tumor segmentation.</li>
       <li>Integration with hospital PACS (Picture Archiving and Communication Systems) via standard DICOM C-STORE
