@@ -222,6 +222,14 @@
       margin-top: 9px;
     }
 
+    .chapter9-summary {
+      font-size: 11pt;
+    }
+
+    .chapter9-summary p {
+      line-height: 1.35;
+    }
+
     .compact-analysis {
       font-size: 10pt;
     }
@@ -1900,15 +1908,17 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
       </tbody>
     </table>
 
-    <div class="section-title">9.2 Project Summary & Key Achievements</div>
-    <p>KLERT combines multi-model brain-MRI classification, Grad-CAM visual explanations, 3D DICOM progression
-      tracking, and structured clinical reporting in one accessible workflow. The Custom BrainTumorCNN achieved
-      <strong>95.82% accuracy</strong>, while ResNet-18 and VGG-16 provide comparative baselines.</p>
-    <ul>
-      <li>Produces ranked predictions with confidence scores and visual heatmaps.</li>
-      <li>Calculates longitudinal tumor-volume change from compatible DICOM masks.</li>
-      <li>Generates structured summaries through the Gemini LLM clinical agent.</li>
-    </ul>
+    <div class="chapter9-summary">
+      <div class="section-title">9.2 Project Summary & Key Achievements</div>
+      <p>KLERT combines multi-model brain-MRI classification, Grad-CAM visual explanations, 3D DICOM progression
+        tracking, and structured clinical reporting in one accessible workflow. The Custom BrainTumorCNN achieved
+        <strong>95.82% accuracy</strong>, while ResNet-18 and VGG-16 provide comparative baselines.</p>
+      <ul>
+        <li>Produces ranked predictions with confidence scores and visual heatmaps.</li>
+        <li>Calculates longitudinal tumor-volume change from compatible DICOM masks.</li>
+        <li>Generates structured summaries through the Gemini LLM clinical agent.</li>
+      </ul>
+    </div>
 
     <div class="footer-page-num">20</div>
   </div>
