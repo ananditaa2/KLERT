@@ -209,6 +209,19 @@
       line-height: 1.58;
     }
 
+    .chapter9-merged {
+      font-size: 9.6pt;
+    }
+
+    .chapter9-merged p {
+      line-height: 1.28;
+    }
+
+    .chapter9-merged .section-title {
+      font-size: 11pt;
+      margin-top: 9px;
+    }
+
     .compact-analysis {
       font-size: 10pt;
     }
@@ -764,7 +777,7 @@
         <tr><td><strong>6</strong></td><td><strong>IMPLEMENTATION</strong></td><td style="text-align: right;"><strong>15</strong></td></tr>
         <tr><td><strong>7</strong></td><td><strong>TESTING AND VALIDATION</strong></td><td style="text-align: right;"><strong>17</strong></td></tr>
         <tr><td><strong>8</strong></td><td><strong>RESULTS AND DISCUSSION</strong></td><td style="text-align: right;"><strong>18</strong></td></tr>
-        <tr><td><strong>9</strong></td><td><strong>CONCLUSION AND FUTURE SCOPE</strong></td><td style="text-align: right;"><strong>21</strong></td></tr>
+        <tr><td><strong>9</strong></td><td><strong>CONCLUSION AND FUTURE SCOPE</strong></td><td style="text-align: right;"><strong>20</strong></td></tr>
         <tr><td></td><td><strong>REFERENCES</strong></td><td style="text-align: right;"><strong>23</strong></td></tr>
       </tbody>
     </table>
@@ -1844,7 +1857,7 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
   </div>
 
   <!-- CHAPTER 9: CONCLUSION AND FUTURE SCOPE (Page 20) -->
-  <div class="page chapter-page">
+  <div class="page chapter-page chapter9-merged">
     <div class="chapter-header">
       <div class="chapter-title">CHAPTER 9: CONCLUSION AND FUTURE SCOPE</div>
     </div>
@@ -1887,25 +1900,17 @@ Linear(256 * 14 * 14 -> 512) -> Dropout(0.4) -> Linear(512 -> 4)</code></pre>
       </tbody>
     </table>
 
-    <div class="footer-page-num">20</div>
-  </div>
-
-  <!-- CHAPTER 9: CONCLUSION AND FUTURE SCOPE (Page 21) -->
-  <div class="page chapter-page chapter9-final">
     <div class="section-title">9.2 Project Summary & Key Achievements</div>
-    <p>The <strong>KLERT</strong> project successfully designed, engineered, tested, and deployed a comprehensive
-      explainable medical AI platform for brain MRI classification and 3D DICOM progression tracking. Key achievements
-      include:</p>
+    <p>KLERT combines multi-model brain-MRI classification, Grad-CAM visual explanations, 3D DICOM progression
+      tracking, and structured clinical reporting in one accessible workflow. The Custom BrainTumorCNN achieved
+      <strong>95.82% accuracy</strong>, while ResNet-18 and VGG-16 provide comparative baselines.</p>
     <ul>
-      <li>Engineered Custom BrainTumorCNN model achieving <strong>95.82% accuracy</strong>, outperforming pretrained
-        ResNet-18 (93.94%) and VGG-16 (92.25%).</li>
-      <li>Integrated Grad-CAM and Grad-CAM++ to deliver visual spatial heatmaps for radiologic interpretability.</li>
-      <li>Built a 3D DICOM volumetric tracking engine to compute tumor volume in \(\text{cm}^3\) across historical
-        patient scans.</li>
-      <li>Integrated Gemini LLM AI Clinical Agent for automated diagnostic report synthesis.</li>
+      <li>Produces ranked predictions with confidence scores and visual heatmaps.</li>
+      <li>Calculates longitudinal tumor-volume change from compatible DICOM masks.</li>
+      <li>Generates structured summaries through the Gemini LLM clinical agent.</li>
     </ul>
 
-    <div class="footer-page-num">21</div>
+    <div class="footer-page-num">20</div>
   </div>
 
   <!-- CHAPTER 9: CONCLUSION AND FUTURE SCOPE (Page 22) -->
